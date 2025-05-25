@@ -22,6 +22,7 @@ variants:
 outputs:
   - name: 'jlc_gerbers_2layer'
     comment: "Generate JLC Gerbers for 2 layer board"
+    run_by_default: false
     type: gerber
     dir: gerber
     options:
@@ -60,6 +61,7 @@ outputs:
 
   - name: 'jlc_gerbers_4layer'
     comment: "Generate JLC Gerbers for 4 layer board"
+    run_by_default: false
     type: gerber
     dir: gerber
     options:
@@ -102,6 +104,7 @@ outputs:
 
   - name: 'jlc_drill_file'
     comment: 'Generate JLC Drill File'
+    run_by_default: false
     type: excellon
     dir: gerber
     options:
@@ -110,6 +113,7 @@ outputs:
 
   - name: 'jlc_pnp'
     comment: 'Generate JLC PnP File'
+    run_by_default: false
     type: position
     dir: pnp
     options:
@@ -133,6 +137,7 @@ outputs:
 
   - name: 'bom_jlc'
     comment: "BOM for JLC"
+    run_by_default: false
     type: bom
     dir: pnp
     options:
@@ -154,6 +159,7 @@ outputs:
 
   - name: 'ibom'
     comment: "Generate Interactive BOM"
+    run_by_default: false
     type: ibom
     dir: doc/ibom
     options:
@@ -166,6 +172,7 @@ outputs:
 
   - name: 'print_sch'
     comment: "Print schematic (PDF)"
+    run_by_default: false
     type: pdf_sch_print
     dir: doc/schematic
     options:
@@ -173,6 +180,7 @@ outputs:
 
   - name: 'board_top_image'
     comment: "Top View PNG"
+    run_by_default: false
     type: pcbdraw
     dir: doc/image
     options:
@@ -185,6 +193,7 @@ outputs:
 
   - name: 'board_bottom_image'
     comment: "Bottom View PNG"
+    run_by_default: false
     type: pcbdraw
     dir: doc/image
     options:
@@ -198,6 +207,7 @@ outputs:
 
   - name: 'step_file'
     comment: 'Generate STEP file'
+    run_by_default: false
     type: export_3d
     dir: doc/3d
     options:
@@ -212,6 +222,7 @@ outputs:
 
   - name: 'render_top'
     comment: "3D render top"
+    run_by_default: false
     type: blender_export
     dir: doc/render
     options:
@@ -224,6 +235,7 @@ outputs:
 
   - name: 'render_bottom'
     comment: "3D render bottom"
+    run_by_default: false
     type: blender_export
     dir: doc/render
     options:
@@ -236,6 +248,7 @@ outputs:
 
   - name: 'render_ortho'
     comment: "3D render at 30 degrees"
+    run_by_default: false
     type: blender_export
     dir: doc/render
     options:
