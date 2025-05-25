@@ -72,14 +72,28 @@ groups:
       - non_fab
 
 outputs:
-  - name: compress_fab_jlc_2layer
+  - name: compress_jlc_fab_2layer
+    comment: "Generates a ZIP file with all the fab outputs"
+    type: compress
+    run_by_default: false
+    options:
+      files:
+        - from_output: jlc_fab_2layer
+  - name: compress_jlc_fab_4layer
+    comment: "Generates a ZIP file with all the fab outputs"
+    type: compress
+    run_by_default: false
+    options:
+      files:
+        - from_output: jlc_fab_4layer
+  - name: compress_jlc_all_2layer
     comment: "Generates a ZIP file with all the fab outputs"
     type: compress
     run_by_default: false
     options:
       files:
         - from_output: jlc_all2
-  - name: compress_fab_jlc_4layer
+  - name: compress_jlc_all_4layer
     comment: "Generates a ZIP file with all the fab outputs"
     type: compress
     run_by_default: false
