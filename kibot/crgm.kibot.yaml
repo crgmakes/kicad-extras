@@ -19,7 +19,74 @@ variants:
     variant: jlcpcb
     # pre_transform: fix_rotation
 
+
+groups:
+  - name: jlc_fab
+    comment: "Fabrication files without gerbers"
+    outputs:
+      - jlc_drill_file
+      - jlc_pnp
+      - jlc_bom
+  - name: jlc_fab_2layer
+    comment: "Fabrication files with 2 layer gerbers"
+    outputs:
+      - jlc_gerbers_2layer
+      - jlc_fab
+  - name: jlc_fab_4layer
+    comment: "Fabrication files with 4 layer gerbers"
+    outputs:
+      - jlc_gerbers_4layer
+      - jlc_fab
+  - name: doc
+    comment: "ibom, schematic, top and bottom images"
+    outputs:
+      - ibom
+      - print_sch
+      - board_top_image
+      - board_bottom_image
+  - name: 3d
+    comment: "3d files"
+    outputs:
+      - step_file
+  - name: render
+    comment: "blender renders top, bottom, ortho"
+    outputs:
+      - render_top
+      - render_bottom
+      - render_ortho
+  - name: non_fab
+    comment: "All non-fabrication files -- doc, 3d, render"
+    outputs:
+      - doc
+      - 3d
+      - render
+  - name: jlc_all4
+    comment: "All 4 layer fabrication files -- fab_4layer, doc, 3d, render"
+    outputs:
+      - jlc_fab_4layer
+      - non_fab
+  - name: jlc_all2
+    comment: "All 2 layer fabrication files -- fab_2layer, doc, 3d, render"
+    outputs:
+      - jlc_fab_2layer
+      - non_fab
+
 outputs:
+  - name: compress_fab_jlc_2layer
+    comment: "Generates a ZIP file with all the fab outputs"
+    type: compress
+    run_by_default: false
+    options:
+      files:
+        - from_output: jlc_all2
+  - name: compress_fab_jlc_4layer
+    comment: "Generates a ZIP file with all the fab outputs"
+    type: compress
+    run_by_default: false
+    options:
+      files:
+        - from_output: jlc_all4
+
   - name: 'jlc_gerbers_2layer'
     comment: "Generate JLC Gerbers for 2 layer board"
     run_by_default: false
@@ -135,7 +202,7 @@ outputs:
         - id: Rot
           name: Rotation
 
-  - name: 'bom_jlc'
+  - name: 'jlc_bom'
     comment: "BOM for JLC"
     run_by_default: false
     type: bom
