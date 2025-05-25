@@ -77,13 +77,16 @@ outputs:
     type: compress
     run_by_default: false
     options:
+      output: '%f-gerber.%x'
       files:
         - from_output: jlc_gerbers_2layer
+
   - name: compress_jlc_4layer
     comment: "Generates a ZIP file with 4 layer outputs"
     type: compress
     run_by_default: false
     options:
+      output: '%f-gerber.%x'
       files:
         - from_output: jlc_gerbers_4layer
 
@@ -92,6 +95,7 @@ outputs:
     type: compress
     run_by_default: false
     options:
+      output: '%f-fab.%x'
       files:
         - from_output: compress_jlc_2layer
         - from_output: jlc_drill_file
@@ -103,12 +107,12 @@ outputs:
     type: compress
     run_by_default: false
     options:
+      output: '%f-fab.%x'
       files:
         - from_output: compress_jlc_4layer
         - from_output: jlc_drill_file
         - from_output: jlc_pnp
         - from_output: jlc_bom
-
 
   - name: 'jlc_gerbers_2layer'
     comment: "Generate JLC Gerbers for 2 layer board"
