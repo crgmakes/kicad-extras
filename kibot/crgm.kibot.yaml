@@ -80,6 +80,7 @@ outputs:
       output: '%f-gerber.%x'
       files:
         - from_output: jlc_gerbers_2layer
+        - from_output: jlc_drill_file
 
   - name: compress_jlc_4layer
     comment: "Generates a ZIP file with 4 layer outputs"
@@ -89,6 +90,7 @@ outputs:
       output: '%f-gerber.%x'
       files:
         - from_output: jlc_gerbers_4layer
+        - from_output: jlc_drill_file
 
   - name: compress_jlc_fab_2layer
     comment: "Generates a ZIP file with all the fab outputs"
@@ -98,7 +100,6 @@ outputs:
       output: '%f-fab.%x'
       files:
         - from_output: compress_jlc_2layer
-        - from_output: jlc_drill_file
         - from_output: jlc_pnp
         - from_output: jlc_bom
 
@@ -110,7 +111,6 @@ outputs:
       output: '%f-fab.%x'
       files:
         - from_output: compress_jlc_4layer
-        - from_output: jlc_drill_file
         - from_output: jlc_pnp
         - from_output: jlc_bom
 
