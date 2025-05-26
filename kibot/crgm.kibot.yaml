@@ -129,6 +129,34 @@ outputs:
         - from_output: jlc_gerbers_4layer
         - from_output: jlc_drill_file
 
+  - name: compress_jlc_2layer_panel
+    comment: "Generates a ZIP file with all the fab outputs"
+    type: compress
+    run_by_default: false
+    options:
+      output: '%f-fab.%x'
+      files:
+        - from_output: compress_jlc_gerber_2layer
+        - from_output: jlc_pnp
+        - from_output: jlc_bom
+        - from_output: board_top_image
+        - from_output: board_bottom_image
+
+  - name: compress_jlc_4layer_panel
+    comment: "Generates a ZIP file with all the fab outputs"
+    type: compress
+    run_by_default: false
+    options:
+      output: '%f-fab.%x'
+      files:
+        - from_output: compress_jlc_gerber_4layer
+        - from_output: jlc_pnp
+        - from_output: jlc_bom
+        - from_output: board_top_image
+        - from_output: board_bottom_image
+
+
+
   - name: compress_jlc_2layer
     comment: "Generates a ZIP file with all the fab outputs"
     type: compress
@@ -427,3 +455,11 @@ outputs:
       point_of_view:
         rotate_x: 30
         rotate_z: -20
+
+  - name: "panelize"
+    comment: "Create panel"
+    type: panelize
+    options:
+      units: mm
+      configs:
+        "panel-options.json"
