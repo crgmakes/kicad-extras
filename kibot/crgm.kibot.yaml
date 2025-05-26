@@ -38,7 +38,7 @@ filters:
     offsets:
       - ["^TO-252-2", "3.3,0"]
       - ["^Converter_ACDC_MeanWell_IRM-10-xx_THT", "-19.2, 5.5"]
-      - ["^GCT_USB4105-GF-A", "0, -2.75"]
+      - ["^GCT_USB4105-GF-A", "0, -2.5"]
 
 variants:
   - name: default
