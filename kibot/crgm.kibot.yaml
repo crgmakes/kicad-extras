@@ -7,6 +7,7 @@
 
 kibot:
   version: 1
+
 global:
   environment:
     # models_3d: ~/kicad-library/models
@@ -49,6 +50,12 @@ variants:
     type: kibom
     variant: jlcpcb
     pre_transform: fix_rotation
+
+preflight:
+  erc: false
+  update_xml: true
+  drc: false
+  check_zone_fills: true
 
 groups:
   - name: jlc_fab
