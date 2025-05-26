@@ -192,7 +192,7 @@ outputs:
     options:
       output: '%f-release.%x'
       files:
-        - from_output: compress_jlc_gerber_2layer
+        - from_output: create_gerber_archive_2layer
         - from_output: create_pnp
         - from_output: create_bom
         - from_output: ibom
@@ -211,7 +211,7 @@ outputs:
     options:
       output: '%f-release.%x'
       files:
-        - from_output: compress_jlc_gerber_4layer
+        - from_output: create_gerber_archive_4layer
         - from_output: create_pnp
         - from_output: create_bom
         - from_output: ibom
