@@ -13,7 +13,7 @@ global:
     # models_3d: ~/kicad-library/models
     # third_party: ~/kicad-library/models
     extra_os: 
-      - KICAD_USER_LIBRARY: ${HOME}/kicad-library
+      - KICAD_USER_LIBRARY: ${GITHUB_WORKSPACE}/working/kicad-library
       - KICAD_USER_MODEL_DIR: ${KICAD_USER_LIBRARY}/models
 
 filters:
