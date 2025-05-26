@@ -132,20 +132,13 @@ outputs:
         - from_output: compress_jlc_gerber_2layer
         - from_output: jlc_pnp
         - from_output: jlc_bom
+        - from_output: ibom
+        - from_output: print_sch
+        - from_output: board_top_image
+        - from_output: board_bottom_image
 
   - name: compress_jlc_4layer
     comment: "Generates a ZIP file with all the fab outputs"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f-fab.%x'
-      files:
-        - from_output: compress_jlc_gerber_4layer
-        - from_output: jlc_pnp
-        - from_output: jlc_bom
-
-  - name: compress_jlc_all_4layer
-    comment: "Generates a ZIP file with all the fab and doc outputs"
     type: compress
     run_by_default: false
     options:
@@ -158,6 +151,32 @@ outputs:
         - from_output: print_sch
         - from_output: board_top_image
         - from_output: board_bottom_image
+
+  - name: compress_jlc_all_2layer
+    comment: "Generates a ZIP file with all the fab and doc outputs"
+    type: compress
+    run_by_default: false
+    options:
+      output: '%f-fab.%x'
+      files:
+        - from_output: compress_jlc_gerber_2layer
+        - from_output: jlc_pnp
+        - from_output: jlc_bom
+        - from_output: step_file
+        - from_output: render_top
+        - from_output: render_bottom
+        - from_output: render_ortho
+
+  - name: compress_jlc_all_4layer
+    comment: "Generates a ZIP file with all the fab and doc outputs"
+    type: compress
+    run_by_default: false
+    options:
+      output: '%f-fab.%x'
+      files:
+        - from_output: compress_jlc_gerber_4layer
+        - from_output: jlc_pnp
+        - from_output: jlc_bom
         - from_output: step_file
         - from_output: render_top
         - from_output: render_bottom
