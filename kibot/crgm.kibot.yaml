@@ -337,7 +337,6 @@ outputs:
       extra_fields: 'Description,MN,MPN'
       dark_mode: true
       name_format: "index"
-      forced_name: "Aquarius Power Module"
 
   - name: 'print_sch'
     comment: "Print schematic (PDF)"
