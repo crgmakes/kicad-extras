@@ -7,6 +7,13 @@
 
 kibot:
   version: 1
+global:
+  environment:
+    # models_3d: ~/kicad-library/models
+    # third_party: ~/kicad-library/models
+    extra_os: 
+      - KICAD_USER_LIBRARY: ${HOME}/kicad-library
+      - KICAD_USER_MODEL_DIR: ${KICAD_USER_LIBRARY}/models
 
 filters:
   - name: only_jlc_parts
@@ -25,12 +32,12 @@ filters:
       - ["^SSOP-", 270.0]
       - ["^MSOP-", 270.0]
       - ["^USB_C_Receptacle_Palconn", 180.0]
-      - ["^USB_C_Receptacle_Palconn", 180.0]
       - ["^SOTFL50P160X60", 270]
+      - ["^CP_Elec_6.3x7.7", 0]
     offsets:
-      - ["^TO-252-2", "-3.3,0"]
-      - ["^Converter_ACDC_MeanWell_IRM", "-10, -5"]
-      - ["^GCT_USB4105", "0, 3.0"]
+      - ["^TO-252-2", "3.3,0"]
+      - ["^Converter_ACDC_MeanWell_IRM-10-xx_THT", "-19.2, 5.5"]
+      - ["^GCT_USB4105-GF-A", "0, -2.75"]
 
 variants:
   - name: default
@@ -95,7 +102,7 @@ groups:
       - non_fab
 
 outputs:
-  - name: compress_jlc_2layer
+  - name: compress_jlc_gerber_2layer
     comment: "Generates a ZIP file with 2 layer outputs"
     type: compress
     run_by_default: false
@@ -105,7 +112,7 @@ outputs:
         - from_output: jlc_gerbers_2layer
         - from_output: jlc_drill_file
 
-  - name: compress_jlc_4layer
+  - name: compress_jlc_gerber_4layer
     comment: "Generates a ZIP file with 4 layer outputs"
     type: compress
     run_by_default: false
@@ -115,27 +122,46 @@ outputs:
         - from_output: jlc_gerbers_4layer
         - from_output: jlc_drill_file
 
-  - name: compress_jlc_fab_2layer
+  - name: compress_jlc_2layer
     comment: "Generates a ZIP file with all the fab outputs"
     type: compress
     run_by_default: false
     options:
       output: '%f-fab.%x'
       files:
-        - from_output: compress_jlc_2layer
+        - from_output: compress_jlc_gerber_2layer
         - from_output: jlc_pnp
         - from_output: jlc_bom
 
-  - name: compress_jlc_fab_4layer
+  - name: compress_jlc_4layer
     comment: "Generates a ZIP file with all the fab outputs"
     type: compress
     run_by_default: false
     options:
       output: '%f-fab.%x'
       files:
-        - from_output: compress_jlc_4layer
+        - from_output: compress_jlc_gerber_4layer
         - from_output: jlc_pnp
         - from_output: jlc_bom
+
+  - name: compress_jlc_all_4layer
+    comment: "Generates a ZIP file with all the fab and doc outputs"
+    type: compress
+    run_by_default: false
+    options:
+      output: '%f-fab.%x'
+      files:
+        - from_output: compress_jlc_gerber_4layer
+        - from_output: jlc_pnp
+        - from_output: jlc_bom
+        - from_output: ibom
+        - from_output: print_sch
+        - from_output: board_top_image
+        - from_output: board_bottom_image
+        - from_output: step_file
+        - from_output: render_top
+        - from_output: render_bottom
+        - from_output: render_ortho
 
   - name: 'jlc_gerbers_2layer'
     comment: "Generate JLC Gerbers for 2 layer board"
