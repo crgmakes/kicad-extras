@@ -329,6 +329,7 @@ outputs:
     options:
       metric_units: false
       pth_and_npth_single_file: true
+      use_aux_axis_as_origin: true
 
   - name: 'create_pnp'
     comment: 'Generate JLC PnP File'
