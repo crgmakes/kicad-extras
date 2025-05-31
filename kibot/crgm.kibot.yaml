@@ -80,6 +80,7 @@ groups:
       - create_schematic_pdf
       - create_board_top_image
       - create_board_bottom_image
+      - create_pcb_drawing
   - name: 3d
     comment: "3d files"
     outputs:
@@ -142,6 +143,7 @@ outputs:
         - from_output: create_schematic_pdf
         - from_output: create_board_top_image
         - from_output: create_board_bottom_image
+        - from_output: create_pcb_drawing
 
   - name: create_pcb_archive_4layer
     comment: "Generates a ZIP with gerbers, drill, ibom, schematic, images"
@@ -157,6 +159,7 @@ outputs:
         - from_output: create_schematic_pdf
         - from_output: create_board_top_image
         - from_output: create_board_bottom_image
+        - from_output: create_pcb_drawing
 
   - name: create_panel_archive_2layer
     comment: "Generates a ZIP with gerbers, drill, images"
@@ -170,6 +173,7 @@ outputs:
         - from_output: create_bom
         - from_output: create_board_top_image
         - from_output: create_board_bottom_image
+        - from_output: create_pcb_drawing
 
   - name: create_panel_archive_4layer
     comment: "Generates a ZIP with gerbers, drill, images"
@@ -183,6 +187,7 @@ outputs:
         - from_output: create_bom
         - from_output: create_board_top_image
         - from_output: create_board_bottom_image
+        - from_output: create_pcb_drawing
 
   - name: create_release_archive_2layer
     comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images"
@@ -198,6 +203,7 @@ outputs:
         - from_output: create_schematic_pdf
         - from_output: create_board_top_image
         - from_output: create_board_bottom_image
+        - from_output: create_pcb_drawing
         - from_output: create_step
         - from_output: create_top_render
         - from_output: create_bottom_render
@@ -217,6 +223,7 @@ outputs:
         - from_output: create_schematic_pdf
         - from_output: create_board_top_image
         - from_output: create_board_bottom_image
+        - from_output: create_pcb_drawing
         - from_output: create_step
         - from_output: create_top_render
         - from_output: create_bottom_render
@@ -388,7 +395,7 @@ outputs:
   - name: 'create_ibom'
     comment: "Generate Interactive BOM"
     run_by_default: false
-    type: create_ibom
+    type: ibom
     dir: doc/ibom
     options:
       output: '%f-ibom.%x'
@@ -506,4 +513,41 @@ outputs:
         {'name': 'kibot_light3', 'pos_x': '-size*2', 'pos_y': 'size*2', 'pos_z': 'size*4', 'energy': 1.25},
         {'name': 'kibot_light4', 'pos_x': 'size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
         ]
+
+  - name: 'create_pcb_drawing'
+    comment: "Creates PDF of PCB with drawing layer enabled"
+    run_by_default: false
+    type: pcb_print
+    dir: doc/pcb
+    options:
+      output: '%f-pcb-drawing.%x'
+      #force_edge_cuts: true
+      plot_sheet_reference: false
+      scaling: 0
+      autoscale_margin_x: 5
+      autoscale_margin_y: 5
+      pages:
+        - layers:
+          - "F.Silkscreen"
+          - "F.Cu"
+          - "User.Drawings"
+          - "Edge.Cuts"
+
+  - name: 'create_pcb_drawing_silk'
+    comment: "Creates PDF of PCB with drawing layer enabled"
+    run_by_default: false
+    type: pcb_print
+    dir: doc/pcb
+    options:
+      output: '%f-pcb-drawing.%x'
+      #force_edge_cuts: true
+      plot_sheet_reference: false
+      scaling: 0
+      autoscale_margin_x: 5
+      autoscale_margin_y: 5
+      pages:
+        - layers:
+          - "F.Silkscreen"
+          - "User.Drawings"
+          - "Edge.Cuts"
 
