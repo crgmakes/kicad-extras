@@ -11,8 +11,8 @@ kibot:
 global:
   environment:
     extra_os: 
-      # - KICAD_USER_LIBRARY: ${HOME}/kicad-library # only works locally not in git
-      - KICAD_USER_LIBRARY: ${GITHUB_WORKSPACE}/working/kicad-library # only works in git
+      - KICAD_USER_LIBRARY: ${HOME}/kicad-library # only works locally not in git
+      # - KICAD_USER_LIBRARY: ${GITHUB_WORKSPACE}/working/kicad-library # only works in git
       - KICAD_USER_MODEL_DIR: ${KICAD_USER_LIBRARY}/models
 
 filters:
@@ -76,20 +76,20 @@ groups:
   - name: doc
     comment: "ibom, schematic, top and bottom images"
     outputs:
-      - ibom
-      - print_sch
-      - board_top_image
-      - board_bottom_image
+      - create_ibom
+      - create_schematic_pdf
+      - create_board_top_image
+      - create_board_bottom_image
   - name: 3d
     comment: "3d files"
     outputs:
-      - step_file
+      - create_step
   - name: render
     comment: "blender renders top, bottom, ortho"
     outputs:
-      - render_top
-      - render_bottom
-      - render_ortho
+      - create_top_render
+      - create_bottom_render
+      - create_ortho_render
   - name: non_fab
     comment: "All non-fabrication files -- doc, 3d, render"
     outputs:
@@ -138,10 +138,10 @@ outputs:
         - from_output: create_gerber_archive_2layer
         - from_output: create_pnp
         - from_output: create_bom
-        - from_output: ibom
-        - from_output: print_sch
-        - from_output: board_top_image
-        - from_output: board_bottom_image
+        - from_output: create_ibom
+        - from_output: create_schematic_pdf
+        - from_output: create_board_top_image
+        - from_output: create_board_bottom_image
 
   - name: create_pcb_archive_4layer
     comment: "Generates a ZIP with gerbers, drill, ibom, schematic, images"
@@ -153,10 +153,10 @@ outputs:
         - from_output: create_gerber_archive_2layer
         - from_output: create_pnp
         - from_output: create_bom
-        - from_output: ibom
-        - from_output: print_sch
-        - from_output: board_top_image
-        - from_output: board_bottom_image
+        - from_output: create_ibom
+        - from_output: create_schematic_pdf
+        - from_output: create_board_top_image
+        - from_output: create_board_bottom_image
 
   - name: create_panel_archive_2layer
     comment: "Generates a ZIP with gerbers, drill, images"
@@ -168,8 +168,8 @@ outputs:
         - from_output: create_gerber_archive_2layer
         - from_output: create_pnp
         - from_output: create_bom
-        - from_output: board_top_image
-        - from_output: board_bottom_image
+        - from_output: create_board_top_image
+        - from_output: create_board_bottom_image
 
   - name: create_panel_archive_4layer
     comment: "Generates a ZIP with gerbers, drill, images"
@@ -181,8 +181,8 @@ outputs:
         - from_output: create_gerber_archive_4layer
         - from_output: create_pnp
         - from_output: create_bom
-        - from_output: board_top_image
-        - from_output: board_bottom_image
+        - from_output: create_board_top_image
+        - from_output: create_board_bottom_image
 
   - name: create_release_archive_2layer
     comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images"
@@ -194,14 +194,14 @@ outputs:
         - from_output: create_gerber_archive_2layer
         - from_output: create_pnp
         - from_output: create_bom
-        - from_output: ibom
-        - from_output: print_sch
-        - from_output: board_top_image
-        - from_output: board_bottom_image
-        - from_output: step_file
-        - from_output: render_top
-        - from_output: render_bottom
-        - from_output: render_ortho
+        - from_output: create_ibom
+        - from_output: create_schematic_pdf
+        - from_output: create_board_top_image
+        - from_output: create_board_bottom_image
+        - from_output: create_step
+        - from_output: create_top_render
+        - from_output: create_bottom_render
+        - from_output: create_ortho_render
 
   - name: create_release_archive_4layer
     comment: "Generates a ZIP file with all the fab and doc outputs"
@@ -213,14 +213,14 @@ outputs:
         - from_output: create_gerber_archive_4layer
         - from_output: create_pnp
         - from_output: create_bom
-        - from_output: ibom
-        - from_output: print_sch
-        - from_output: board_top_image
-        - from_output: board_bottom_image
-        - from_output: step_file
-        - from_output: render_top
-        - from_output: render_bottom
-        - from_output: render_ortho
+        - from_output: create_ibom
+        - from_output: create_schematic_pdf
+        - from_output: create_board_top_image
+        - from_output: create_board_bottom_image
+        - from_output: create_step
+        - from_output: create_top_render
+        - from_output: create_bottom_render
+        - from_output: create_ortho_render
 
   - name: 'create_gerber_2layer'
     comment: "Generate JLC Gerbers for 2 layer board"
@@ -385,10 +385,10 @@ outputs:
       configs:
         "panel-options.json"
 
-  - name: 'ibom'
+  - name: 'create_ibom'
     comment: "Generate Interactive BOM"
     run_by_default: false
-    type: ibom
+    type: create_ibom
     dir: doc/ibom
     options:
       output: '%f-ibom.%x'
@@ -397,7 +397,7 @@ outputs:
       dark_mode: true
       name_format: "index"
 
-  - name: 'print_sch'
+  - name: 'create_schematic_pdf'
     comment: "Print schematic (PDF)"
     run_by_default: false
     type: pdf_sch_print
@@ -405,7 +405,7 @@ outputs:
     options:
       output: '%f-schematic.%x'
 
-  - name: 'board_top_image'
+  - name: 'create_board_top_image'
     comment: "Top View PNG"
     run_by_default: false
     type: pcbdraw
@@ -418,7 +418,7 @@ outputs:
       show_components: all
       warnings: none
 
-  - name: 'board_bottom_image'
+  - name: 'create_board_bottom_image'
     comment: "Bottom View PNG"
     run_by_default: false
     type: pcbdraw
@@ -432,22 +432,24 @@ outputs:
       show_components: all
       warnings: none
 
-  - name: 'step_file'
+  - name: 'create_step'
     comment: 'Generate STEP file'
     run_by_default: false
     type: export_3d
     dir: doc/3d
     options:
       output: '%f.%x'
-      download: false
-      download_lcsc: false
+      # download: false
+      # download_lcsc: false
+      download: true
+      download_lcsc: true
       include_pads: true
       include_silkscreen: true
       include_soldermask: true
       subst_models: true
       cut_vias_in_body: true
 
-  - name: 'render_top'
+  - name: 'create_top_render'
     comment: "3D render top"
     run_by_default: false
     type: blender_export
@@ -466,7 +468,7 @@ outputs:
         {'name': 'kibot_light4', 'pos_x': 'size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
         ]
 
-  - name: 'render_bottom'
+  - name: 'create_bottom_render'
     comment: "3D render bottom"
     run_by_default: false
     type: blender_export
@@ -485,7 +487,7 @@ outputs:
         {'name': 'kibot_light4', 'pos_x': 'size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
         ]
 
-  - name: 'render_ortho'
+  - name: 'create_ortho_render'
     comment: "3D render at 30 degrees"
     run_by_default: false
     type: blender_export
