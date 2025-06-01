@@ -449,7 +449,7 @@ outputs:
       # download: false
       # download_lcsc: false
       download: true
-      download_lcsc: true
+      # download_lcsc: true
       include_pads: true
       include_silkscreen: true
       include_soldermask: true
