@@ -11,8 +11,8 @@ kibot:
 global:
   environment:
     extra_os: 
-      - KICAD_USER_LIBRARY: ${HOME}/kicad-library # only works locally not in git
-      # - KICAD_USER_LIBRARY: ${GITHUB_WORKSPACE}/working/kicad-library # only works in git
+      # - KICAD_USER_LIBRARY: ${HOME}/kicad-library # only works locally not in git
+      - KICAD_USER_LIBRARY: ${GITHUB_WORKSPACE}/working/kicad-library # only works in git
       - KICAD_USER_MODEL_DIR: ${KICAD_USER_LIBRARY}/models
 
 filters:
