@@ -528,9 +528,10 @@ outputs:
       autoscale_margin_y: 5
       pages:
         - layers:
-          - "F.Silkscreen"
-          - "F.Cu"
+          # - "F.Silkscreen"
+          # - "F.Cu"
           - "User.Drawings"
+          - "User.Comments"
           - "Edge.Cuts"
 
   - name: 'create_pcb_drawing_silk'
