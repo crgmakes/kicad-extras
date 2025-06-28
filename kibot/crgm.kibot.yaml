@@ -26,18 +26,31 @@ filters:
     comment: 'Adjust rotation for JLC'
     type: rot_footprint
     rotations:
-      - ["^TI_SO-", 270.0]
-      - ["^SO-", 270.0]
-      - ["^HTSSOP-", 270.0]
-      - ["^SSOP-", 270.0]
-      - ["^MSOP-", 270.0]
-      - ["^USB_C_Receptacle_Palconn", 180.0]
+      # D1 -90; J1 -x; J10 Pin 1; U1 -Y 
+      # - ["^JST_SH_BM0", 180.0]
+      - ["^QFN-28-1EP_6x6mm_P0.65mm_EP4.25x4.25mm", -90.0]
+      - ["^JST_SH_BM08B-SRSS-TB_1x08-1MP_P1.00mm_Vertical", 180.0]
+      - ["^JST_SH_BM06B-SRSS-TB_1x06-1MP_P1.00mm_Vertical", 180.0]
+      - ["^JST_SH_BM04B-SRSS-TB_1x04-1MP_P1.00mm_Vertical", 180.0]
+      - ["^JST_SH_BM03B-SRSS-TB_1x03-1MP_P1.00mm_Vertical", 180.0]
+      - ["^LED_WS2812B-2020_PLCC4_2.0x2.0mm", 0.0]
+      - ["^SOT-523", 180.0]
+      - ["^SOT-666", -90.0]
+      - ["^XF2M-1415-1A", 180.0]
+      # - ["^TI_SO-", 270.0]
+      # - ["^SO-", 270.0]
+      # - ["^HTSSOP-", 270.0]
+      # - ["^SSOP-", 270.0]
+      # - ["^MSOP-", 270.0]
+      # - ["^USB_C_Receptacle_Palconn", 180.0]
       - ["^SOTFL50P160X60", 270]
       - ["^CP_Elec_6.3x7.7", 0]
     offsets:
       - ["^TO-252-2", "3.3,0"]
       - ["^Converter_ACDC_MeanWell_IRM-10-xx_THT", "-19.2, 5.5"]
       - ["^GCT_USB4105-GF-A", "0, -2.5"]
+      - ["^ESP32-S3-WROOM-1-N8R2", "0, 3.65"]
+      - ["^XF2C_1415-1A", "0, -0.37"]
 
 variants:
   - name: default
@@ -60,18 +73,18 @@ groups:
   - name: jlc_fab
     comment: "Fabrication files without gerbers"
     outputs:
-      - jlc_drill_file
-      - jlc_pnp
-      - jlc_bom
+      - create_drill_file
+      - create_pnp
+      - create_bom
   - name: jlc_fab_2layer
     comment: "Fabrication files with 2 layer gerbers"
     outputs:
-      - jlc_gerbers_2layer
+      - create_gerber_2layer
       - jlc_fab
   - name: jlc_fab_4layer
     comment: "Fabrication files with 4 layer gerbers"
     outputs:
-      - jlc_gerbers_4layer
+      - create_gerber_4layer
       - jlc_fab
   - name: doc
     comment: "ibom, schematic, top and bottom images"
@@ -337,6 +350,29 @@ outputs:
       metric_units: false
       pth_and_npth_single_file: true
       use_aux_axis_as_origin: true
+
+  - name: 'create_pnp_default'
+    comment: 'Generate generic PnP File'
+    run_by_default: false
+    type: position
+    dir: pnp
+    options:
+      output: '%f-cpl.%x'
+      format: CSV
+      units: millimeters
+      separate_files_for_front_and_back: false
+      only_smd: false
+      columns:
+        - id: Ref
+          name: Designator
+        - id: PosX
+          name: "Mid X"
+        - id: PosY
+          name: "Mid Y"
+        - id: Side
+          name: Layer
+        - id: Rot
+          name: Rotation
 
   - name: 'create_pnp'
     comment: 'Generate JLC PnP File'
