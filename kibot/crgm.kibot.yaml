@@ -460,6 +460,9 @@ outputs:
       show_solderpaste: false
       show_components: all
       warnings: none
+      style:
+        board: "#590056"
+        copper: "#80007b"
 
   - name: 'create_board_bottom_image'
     comment: "Bottom View PNG"
@@ -474,6 +477,9 @@ outputs:
       show_solderpaste: false
       show_components: all
       warnings: none
+      style:
+        board: "#590056"
+        copper: "#80007b"
 
   - name: 'create_step'
     comment: 'Generate STEP file'
