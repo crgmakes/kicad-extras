@@ -16,6 +16,20 @@ global:
       - KICAD_USER_MODEL_DIR: ${KICAD_USER_LIBRARY}/models
 
 filters:
+  - name: 'exclude_common'
+    type: 'generic'
+    comment: 'Excludes test points, logos, and fiducials'
+    exclude_any:
+      - column: Reference
+        regex: '^TP[0-9]*'
+      - column: Reference
+        regex: '^FID'
+      - column: Reference
+        regex: '^LOGO'
+      - column: Reference
+        regex: '^KiKit_'
+      - column: Reference
+        regex: '^kibuzzard-'
   - name: only_jlc_parts
     comment: 'Only parts with JLC (LCSC) code'
     type: generic
@@ -26,8 +40,6 @@ filters:
     comment: 'Adjust rotation for JLC'
     type: rot_footprint
     rotations:
-      # D1 -90; J1 -x; J10 Pin 1; U1 -Y 
-      # - ["^JST_SH_BM0", 180.0]
       - ["^QFN-28-1EP_6x6mm_P0.65mm_EP4.25x4.25mm", -90.0]
       - ["^JST_SH_BM08B-SRSS-TB_1x08-1MP_P1.00mm_Vertical", 180.0]
       - ["^JST_SH_BM06B-SRSS-TB_1x06-1MP_P1.00mm_Vertical", 180.0]
@@ -74,7 +86,7 @@ groups:
     comment: "Fabrication files without gerbers"
     outputs:
       - create_drill_file
-      - create_pnp
+      - create_pnp_jlc
       - create_bom
   - name: jlc_fab_2layer
     comment: "Fabrication files with 2 layer gerbers"
@@ -150,7 +162,7 @@ outputs:
       output: '%f.%x'
       files:
         - from_output: create_gerber_archive_2layer
-        - from_output: create_pnp
+        - from_output: create_pnp_jlc
         - from_output: create_bom
         - from_output: create_ibom
         - from_output: create_schematic_pdf
@@ -166,7 +178,7 @@ outputs:
       output: '%f.%x'
       files:
         - from_output: create_gerber_archive_2layer
-        - from_output: create_pnp
+        - from_output: create_pnp_jlc
         - from_output: create_bom
         - from_output: create_ibom
         - from_output: create_schematic_pdf
@@ -182,7 +194,7 @@ outputs:
       output: '%f.%x'
       files:
         - from_output: create_gerber_archive_2layer
-        - from_output: create_pnp
+        - from_output: create_pnp_jlc
         - from_output: create_bom
         - from_output: create_board_top_image
         - from_output: create_board_bottom_image
@@ -196,7 +208,7 @@ outputs:
       output: '%f.%x'
       files:
         - from_output: create_gerber_archive_4layer
-        - from_output: create_pnp
+        - from_output: create_pnp_jlc
         - from_output: create_bom
         - from_output: create_board_top_image
         - from_output: create_board_bottom_image
@@ -210,7 +222,7 @@ outputs:
       output: '%f-release.%x'
       files:
         - from_output: create_gerber_archive_2layer
-        - from_output: create_pnp
+        - from_output: create_pnp_jlc
         - from_output: create_bom
         - from_output: create_ibom
         - from_output: create_schematic_pdf
@@ -230,7 +242,7 @@ outputs:
       output: '%f-release.%x'
       files:
         - from_output: create_gerber_archive_4layer
-        - from_output: create_pnp
+        - from_output: create_pnp_jlc
         - from_output: create_bom
         - from_output: create_ibom
         - from_output: create_schematic_pdf
@@ -362,6 +374,7 @@ outputs:
       units: millimeters
       separate_files_for_front_and_back: false
       only_smd: false
+      exclude_filter: 'exclude_common'
       columns:
         - id: Ref
           name: Designator
@@ -374,7 +387,7 @@ outputs:
         - id: Rot
           name: Rotation
 
-  - name: 'create_pnp'
+  - name: 'create_pnp_jlc'
     comment: 'Generate JLC PnP File'
     run_by_default: false
     type: position
@@ -385,6 +398,7 @@ outputs:
       units: millimeters
       separate_files_for_front_and_back: false
       only_smd: false
+      exclude_filter: 'exclude_common'
       variant: jlcpcb
       columns:
         - id: Ref
@@ -406,6 +420,7 @@ outputs:
     options:
       output: '%f-jlc-bom.%x'
       ref_separator: ','
+      exclude_filter: 'exclude_common'
       columns:
         - field: Value
           name: Comment
@@ -435,6 +450,7 @@ outputs:
     dir: doc/ibom
     options:
       output: '%f-ibom.%x'
+      #exclude_filter: 'exclude_common'
       show_fields: 'Value,Description,MN,MPN,Footprint'
       extra_fields: 'Description,MN,MPN'
       dark_mode: true
