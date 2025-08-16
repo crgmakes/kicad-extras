@@ -57,6 +57,7 @@ filters:
       # - ["^USB_C_Receptacle_Palconn", 180.0]
       - ["^SOTFL50P160X60", 270]
       - ["^CP_Elec_6.3x7.7", 0]
+      - ["^TC33X-2-105E", -90]
     offsets:
       - ["^TO-252-2", "3.3,0"]
       - ["^Converter_ACDC_MeanWell_IRM-10-xx_THT", "-19.2, 5.5"]
