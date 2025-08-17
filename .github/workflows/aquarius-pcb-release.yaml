@@ -32,8 +32,8 @@ jobs:
     - name: Update system
       run: |
         echo "Working Directory $(pwd)"
-        echo "version: ${aq-version}"    
-        echo "hash: '${aq-hash}'"
+        echo "version: ${{inputs.aq-version}}"    
+        echo "hash: '${{inputs.aq-hash}}'"
         apt update
         apt -y install git zip
 
