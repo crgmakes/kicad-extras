@@ -1,7 +1,8 @@
 # Aquarius - Automation Simplified
 #
-# @brief Git script for exporting PCB data/
+# @brief Git script for exporting PCB ECAD data
 # @note script runs when called from another script
+# @note contains both manual and release jobs
 # @date 6/29/25
 # @author cyberreefguru
 # (c) CRG Makes 2025
@@ -15,6 +16,12 @@ on:
       file-name:
         required: true
         type: string
+      aq-version:
+        required: true
+        type: string
+      aq-hash:
+        required: true
+        type: string
 jobs:
   export-ecad:
     name: Export ECAD
@@ -25,6 +32,8 @@ jobs:
     - name: Update system
       run: |
         echo "Working Directory $(pwd)"
+        echo "version: ${aq-version}"    
+        echo "hash: '${aq-hash}'"
         apt update
         apt -y install git zip
 
@@ -64,42 +73,50 @@ jobs:
         fc-cache -f -v
 
     # Update PCB with hash of current check in
-    - name: Update the PCB with git hash
+    # Make hash 'manual' since this is not a release
+    - name: Add Hash Manual
+      if: github.event_name != 'release'
+      run: |
+        cd working/${{inputs.repo-name}}/pcb
+        export RELEASE_DATE=$(date "+%m/%d/%Y @ %H:%M")
+        sed -i "s!<<hash>>!0000000!" *.kicad_pcb
+        sed -i "s!<<hash>>!0000000!" *.kicad_sch
+        sed -i "s!<<tag>>!v0.0.0!" *.kicad_pcb
+        sed -i "s!<<tag>>!v0.0.0!" *.kicad_sch
+        sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
+        sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
+
+    # Update PCB with hash of current check in
+    - name: Add Hash Release
       run: |
         cd working/${{inputs.repo-name}}
         export COMMIT=$(git rev-parse --short HEAD)
         export RELEASE_DATE=$(date "+%m/%d/%Y @ %H:%M")
         echo "COMMIT = ${COMMIT}"    
+        echo "default: '${{ env.default }}'"
         echo "ref: '${{ github.ref }}'"
         echo "tag: '${{ github.event.release.tag_name }}'"
-        echo "default: '${{ env.default }}'"
         cd pcb
         sed -i "s!<<hash>>!${COMMIT}!" *.kicad_pcb
         sed -i "s!<<hash>>!${COMMIT}!" *.kicad_sch
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
-
-    # Remove tag from PCB since this is not a release
-    - name: Update the PCB build with git hash
-      if: github.event_name != 'release'
-      run: |
-        cd working/${{inputs.repo-name}}/pcb
-        sed -i "s!<<tag>>!MANUAL!" *.kicad_pcb
-        sed -i "s!<<tag>>!MANUAL!" *.kicad_sch
-
-    # Update PCB with release tag
-    - name: Update the PCB release with git hash and version tag
-      if: github.event_name == 'release'
-      run: |
-        cd working/${{inputs.repo-name}}/pcb
-        echo "tag: ${{ github.ref_name }}"
-        echo "release tag: ${{ github.event.release.tag_name }}"
         sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_pcb
         sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_sch
 
+    # # Update PCB with release tag
+    # - name: Add release tag (version)
+    #   if: github.event_name == 'release'
+    #   run: |
+    #     cd working/${{inputs.repo-name}}/pcb
+    #     echo "tag: ${{ github.ref_name }}"
+    #     echo "release tag: ${{ github.event.release.tag_name }}"
+    #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_pcb
+    #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_sch
+
     # generates fab files for the single PCB, includes gerber, drill, ibom, schematic, and images
     # NOTE: only run if this is not a release (e.g., run manually)
-    - name: Generate Single PCB Fabrication Files
+    - name: Generate Fabrication Files Manual
       if: github.event_name != 'release'
       run: |
         echo "Working Directory: ${GITHUB_WORKSPACE}"
@@ -111,7 +128,7 @@ jobs:
 
     # generates fab files for the single PCB, includes gerber, drill, ibom, schematic, images, 3d model, and renders
     # NOTE: only run if this is a release
-    - name: Generate Release Fabrication Files
+    - name: Generate Fabrication Files Release
       if: github.event_name == 'release'
       run: |
         echo "Working Directory: ${GITHUB_WORKSPACE}"
@@ -123,7 +140,7 @@ jobs:
 
     # only generate panel during a release
     # generates fab files for the panel PCB, includes gerber, drill, images - does NOT include ibom, 3d model, schematic, or renders
-    - name: Generate PCB Panel for Release
+    - name: Generate Panel Release
       if: github.event_name == 'release'
       run: |
         cd working/${{inputs.repo-name}}/pcb/panel
@@ -142,7 +159,7 @@ jobs:
 
     # only runs if NOT a release
     # Upload fab artifacts to workflow
-    - name: Upload PCB Artifacts
+    - name: Upload Artifacts Manual
       if: github.event_name != 'release'
       uses: actions/upload-artifact@v4
       with:
@@ -150,11 +167,10 @@ jobs:
         path: |
           ${{inputs.file-name}}.zip
         if-no-files-found: warn
-        retention-days: 30
+        retention-days: 10
 
     # Upload release fab artifacts to workflow
-    # NOTE: only runs during a release
-    - name: Upload Release Artifacts
+    - name: Upload Artifacts Release
       if: github.event_name == 'release'
       uses: actions/upload-artifact@v4
       with:
@@ -167,7 +183,7 @@ jobs:
 
     # Upload release fab artifacts to release
     # NOTE: only runs during a release
-    - name: Upload files to release area
+    - name: Upload Release
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'release'
       with:
