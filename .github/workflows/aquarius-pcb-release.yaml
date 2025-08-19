@@ -16,10 +16,10 @@ on:
       file-name:
         required: true
         type: string
-      aq-version:
+      version:
         required: true
         type: string
-      aq-hash:
+      hash:
         required: true
         type: string
 jobs:
@@ -32,8 +32,8 @@ jobs:
     - name: Update system
       run: |
         echo "Working Directory $(pwd)"
-        echo "version: ${{inputs.aq-version}}"    
-        echo "hash: '${{inputs.aq-hash}}'"
+        echo "version: ${{inputs.version}}"    
+        echo "hash: '${{inputs.hash}}'"
         apt update
         apt -y install git zip
 
@@ -74,35 +74,35 @@ jobs:
 
     # Update PCB with hash of current check in
     # Make hash 'manual' since this is not a release
-    - name: Add Hash Manual
-      if: github.event_name != 'release'
+    - name: Update build unique variables
+      # if: github.event_name != 'release'
       run: |
         cd working/${{inputs.repo-name}}/pcb
         export RELEASE_DATE=$(date "+%m/%d/%Y @ %H:%M")
-        sed -i "s!<<hash>>!0000000!" *.kicad_pcb
-        sed -i "s!<<hash>>!0000000!" *.kicad_sch
-        sed -i "s!<<tag>>!v0.0.0!" *.kicad_pcb
-        sed -i "s!<<tag>>!v0.0.0!" *.kicad_sch
+        sed -i "s!<<hash>>!${{inputs.hash}}!" *.kicad_pcb
+        sed -i "s!<<hash>>!${{inputs.hash}}!" *.kicad_sch
+        sed -i "s!<<tag>>!${{inputs.version}}!" *.kicad_pcb
+        sed -i "s!<<tag>>!${{inputs.version}}!" *.kicad_sch
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
 
-    # Update PCB with hash of current check in
-    - name: Add Hash Release
-      run: |
-        cd working/${{inputs.repo-name}}
-        export COMMIT=$(git rev-parse --short HEAD)
-        export RELEASE_DATE=$(date "+%m/%d/%Y @ %H:%M")
-        echo "COMMIT = ${COMMIT}"    
-        echo "default: '${{ env.default }}'"
-        echo "ref: '${{ github.ref }}'"
-        echo "tag: '${{ github.event.release.tag_name }}'"
-        cd pcb
-        sed -i "s!<<hash>>!${COMMIT}!" *.kicad_pcb
-        sed -i "s!<<hash>>!${COMMIT}!" *.kicad_sch
-        sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
-        sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
-        sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_pcb
-        sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_sch
+    # # Update PCB with hash of current check in
+    # - name: Add Hash Release
+    #   run: |
+    #     cd working/${{inputs.repo-name}}
+    #     export COMMIT=$(git rev-parse --short HEAD)
+    #     export RELEASE_DATE=$(date "+%m/%d/%Y @ %H:%M")
+    #     echo "COMMIT = ${COMMIT}"    
+    #     echo "default: '${{ env.default }}'"
+    #     echo "ref: '${{ github.ref }}'"
+    #     echo "tag: '${{ github.event.release.tag_name }}'"
+    #     cd pcb
+    #     sed -i "s!<<hash>>!${COMMIT}!" *.kicad_pcb
+    #     sed -i "s!<<hash>>!${COMMIT}!" *.kicad_sch
+    #     sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
+    #     sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
+    #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_pcb
+    #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_sch
 
     # # Update PCB with release tag
     # - name: Add release tag (version)
@@ -135,8 +135,8 @@ jobs:
         cd working/${{inputs.repo-name}}/
         kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production create_release_archive_4layer
         # production now contains ${{inputs.file-name}}-release.zip
-        mv production/${{inputs.file-name}}-release.zip ../../${{inputs.file-name}}-release-${{ github.event.release.tag_name }}.zip
-        # ${{inputs.file-name}}-release-<<tag>>.zip now in home directory
+        mv production/${{inputs.file-name}}-release.zip ../../${{inputs.file-name}}-release-${{inputs.version}}.zip
+        # ${{inputs.file-name}}-release-${{inputs.version}}.zip now in home directory
 
     # only generate panel during a release
     # generates fab files for the panel PCB, includes gerber, drill, images - does NOT include ibom, 3d model, schematic, or renders
@@ -154,8 +154,8 @@ jobs:
         mv production/${{inputs.file-name}}-panel.zip .
         # add panelized PCB to archive
         zip -u ${{inputs.file-name}}-panel.zip pcb/**
-        mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-release-${{ github.event.release.tag_name }}.zip
-        # home now contains ${{inputs.file-name}}-panel-release-${{ github.event.release.tag_name }}.zip
+        mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
+        # home now contains ${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
 
     # only runs if NOT a release
     # Upload fab artifacts to workflow
@@ -174,10 +174,10 @@ jobs:
       if: github.event_name == 'release'
       uses: actions/upload-artifact@v4
       with:
-        name: aquarius-${{inputs.file-name}}-${{ github.event.release.tag_name }}
+        name: aquarius-${{inputs.file-name}}-${{inputs.version}}
         path: |
-          ${{inputs.file-name}}-release-${{ github.event.release.tag_name }}.zip
-          ${{inputs.file-name}}-panel-release-${{ github.event.release.tag_name }}.zip
+          ${{inputs.file-name}}-release-${{inputs.version}}.zip
+          ${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
         if-no-files-found: warn
         retention-days: 30
 
@@ -187,7 +187,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'release'
       with:
-        name: aquarius-${{inputs.file-name}}-${{ github.event.release.tag_name }}
+        name: aquarius-${{inputs.file-name}}-${{inputs.version}}
         files: |
-          ${{inputs.file-name}}-release-${{ github.event.release.tag_name }}.zip
-          ${{inputs.file-name}}-panel-release-${{ github.event.release.tag_name }}.zip
+          ${{inputs.file-name}}-release-${{inputs.version}}.zip
+          ${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
