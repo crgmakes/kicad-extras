@@ -114,22 +114,21 @@ jobs:
     #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_pcb
     #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_sch
 
-    # generates fab files for the single PCB, includes gerber, drill, ibom, schematic, and images
-    # NOTE: only run if this is not a release (e.g., run manually)
-    - name: Generate Fabrication Files Manual
-      if: github.event_name != 'release'
-      run: |
-        echo "Working Directory: ${GITHUB_WORKSPACE}"
-        cd working/${{inputs.repo-name}}/
-        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production create_pcb_archive_4layer
-        # production now contains ${{inputs.file-name}}.zip
-        mv production/${{inputs.file-name}}.zip ../..
-        # ${{inputs.file-name}}.zip now in home directory
+    # # generates fab files for the single PCB, includes gerber, drill, ibom, schematic, and images
+    # # NOTE: only run if this is not a release (e.g., run manually)
+    # - name: Generate Fabrication Files Manual
+    #   if: github.event_name != 'release'
+    #   run: |
+    #     echo "Working Directory: ${GITHUB_WORKSPACE}"
+    #     cd working/${{inputs.repo-name}}/
+    #     kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production create_pcb_archive_4layer
+    #     # production now contains ${{inputs.file-name}}.zip
+    #     mv production/${{inputs.file-name}}.zip ../..
+    #     # ${{inputs.file-name}}.zip now in home directory
 
     # generates fab files for the single PCB, includes gerber, drill, ibom, schematic, images, 3d model, and renders
-    # NOTE: only run if this is a release
-    - name: Generate Fabrication Files Release
-      if: github.event_name == 'release'
+    - name: Generate Fabrication Files
+      # if: github.event_name == 'release'
       run: |
         echo "Working Directory: ${GITHUB_WORKSPACE}"
         cd working/${{inputs.repo-name}}/
@@ -157,31 +156,31 @@ jobs:
         mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
         # home now contains ${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
 
-    # only runs if NOT a release
-    # Upload fab artifacts to workflow
-    - name: Upload Artifacts Manual
-      if: github.event_name != 'release'
-      uses: actions/upload-artifact@v4
-      with:
-        name: aquarius-${{inputs.file-name}}
-        path: |
-          ${{inputs.file-name}}.zip
-        if-no-files-found: warn
-        retention-days: 10
+    # # only runs if NOT a release
+    # # Upload fab artifacts to workflow
+    # - name: Upload Artifacts Manual
+    #   if: github.event_name != 'release'
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: aquarius-${{inputs.file-name}}
+    #     path: |
+    #       ${{inputs.file-name}}.zip
+    #     if-no-files-found: warn
+    #     retention-days: 10
 
-    # Upload release fab artifacts to workflow
-    - name: Upload Artifacts Release
-      if: github.event_name == 'release'
+    # Upload fab artifacts to workflow
+    - name: Upload Artifacts
+      # if: github.event_name == 'release'
       uses: actions/upload-artifact@v4
       with:
         name: aquarius-${{inputs.file-name}}-${{inputs.version}}
         path: |
-          ${{inputs.file-name}}-release-${{inputs.version}}.zip
-          ${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
+          ${{inputs.file-name}}-${{inputs.version}}.zip
+          ${{inputs.file-name}}-panel-${{inputs.version}}.zip
         if-no-files-found: warn
         retention-days: 30
 
-    # Upload release fab artifacts to release
+    # Upload fab artifacts to release
     # NOTE: only runs during a release
     - name: Upload Release
       uses: softprops/action-gh-release@v1
@@ -189,5 +188,5 @@ jobs:
       with:
         name: aquarius-${{inputs.file-name}}-${{inputs.version}}
         files: |
-          ${{inputs.file-name}}-release-${{inputs.version}}.zip
-          ${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
+          ${{inputs.file-name}}-${{inputs.version}}.zip
+          ${{inputs.file-name}}-panel-${{inputs.version}}.zip
