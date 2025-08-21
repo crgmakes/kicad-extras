@@ -72,8 +72,7 @@ jobs:
         cp working/kicad-extras/fonts/* /usr/share/fonts/
         fc-cache -f -v
 
-    # Update PCB with hash of current check in
-    # Make hash 'manual' since this is not a release
+    # Update PCB with version, hash, and date
     - name: Update build unique variables
       # if: github.event_name != 'release'
       run: |
@@ -134,8 +133,8 @@ jobs:
         cd working/${{inputs.repo-name}}/
         kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production create_release_archive_4layer
         # production now contains ${{inputs.file-name}}-release.zip
-        mv production/${{inputs.file-name}}-release.zip ../../${{inputs.file-name}}-release-${{inputs.version}}.zip
-        # ${{inputs.file-name}}-release-${{inputs.version}}.zip now in home directory
+        mv production/${{inputs.file-name}}-release.zip ../../${{inputs.file-name}}-${{inputs.version}}.zip
+        # ${{inputs.file-name}}-${{inputs.version}}.zip now in home directory
 
     # only generate panel during a release
     # generates fab files for the panel PCB, includes gerber, drill, images - does NOT include ibom, 3d model, schematic, or renders
@@ -153,8 +152,8 @@ jobs:
         mv production/${{inputs.file-name}}-panel.zip .
         # add panelized PCB to archive
         zip -u ${{inputs.file-name}}-panel.zip pcb/**
-        mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
-        # home now contains ${{inputs.file-name}}-panel-release-${{inputs.version}}.zip
+        mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-${{inputs.version}}.zip
+        # home now contains ${{inputs.file-name}}-panel-${{inputs.version}}.zip
 
     # # only runs if NOT a release
     # # Upload fab artifacts to workflow
