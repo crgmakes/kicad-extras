@@ -10,6 +10,9 @@ name: Aquarius-PCB-Release
 on:
   workflow_call:
     inputs:
+      name:
+        required: true
+        type: string
       repo-name:
         required: true
         type: string
@@ -73,7 +76,7 @@ jobs:
         fc-cache -f -v
 
     # Update PCB with version, hash, and date
-    - name: Update build unique variables
+    - name: Update build variables
       # if: github.event_name != 'release'
       run: |
         cd working/${{inputs.repo-name}}/pcb
@@ -126,7 +129,7 @@ jobs:
     #     # ${{inputs.file-name}}.zip now in home directory
 
     # generates fab files for the single PCB, includes gerber, drill, ibom, schematic, images, 3d model, and renders
-    - name: Generate Fabrication Files
+    - name: Generate Single Fabrication Files
       # if: github.event_name == 'release'
       run: |
         echo "Working Directory: ${GITHUB_WORKSPACE}"
@@ -167,25 +170,33 @@ jobs:
     #     if-no-files-found: warn
     #     retention-days: 10
 
-    # Upload fab artifacts to workflow
-    - name: Upload Artifacts
-      # if: github.event_name == 'release'
+    # Upload single board fab artifacts to workflow
+    - name: Upload Board Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: aquarius-${{inputs.file-name}}-${{inputs.version}}
+        name: '${{inputs.name}} ${{inputs.version}}'
         path: |
           ${{inputs.file-name}}-${{inputs.version}}.zip
+        if-no-files-found: warn
+        retention-days: 30
+
+    # Upload panel artifacts to workflow
+    - name: Upload Panel Artifacts
+      if: github.event_name == 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: '${{inputs.name}} Panel ${{inputs.version}}'
+        path: |
           ${{inputs.file-name}}-panel-${{inputs.version}}.zip
         if-no-files-found: warn
         retention-days: 30
 
     # Upload fab artifacts to release
-    # NOTE: only runs during a release
     - name: Upload Release
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'release'
       with:
-        name: aquarius-${{inputs.file-name}}-${{inputs.version}}
+        name: '${{inputs.name}} ${{inputs.version}}'
         files: |
           ${{inputs.file-name}}-${{inputs.version}}.zip
           ${{inputs.file-name}}-panel-${{inputs.version}}.zip
