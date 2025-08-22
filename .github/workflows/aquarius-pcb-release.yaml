@@ -26,18 +26,6 @@ jobs:
     container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
       
     steps:
-    - name: Set manual version
-      if: github.event_name != 'release'
-      run: |
-        echo "VERSION=$(date "+%Y-%m-%d-%H-%M")" >> $GITHUB_ENV
-    - name: Set release version
-      if: github.event_name == 'release'
-      run: |
-        echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
-    - name: Set hash
-      run: |
-        echo "HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
     - name: Update system
       run: |
         echo "Working Directory $(pwd)"
@@ -80,6 +68,18 @@ jobs:
         mkdir -p /usr/share/fonts/
         cp working/kicad-extras/fonts/* /usr/share/fonts/
         fc-cache -f -v
+
+    - name: Set manual version
+      if: github.event_name != 'release'
+      run: |
+        echo "VERSION=$(date "+%Y-%m-%d-%H-%M")" >> $GITHUB_ENV
+    - name: Set release version
+      if: github.event_name == 'release'
+      run: |
+        echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+    - name: Set hash
+      run: |
+        echo "HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     # Update PCB with version, hash, and date
     - name: Update build variables
