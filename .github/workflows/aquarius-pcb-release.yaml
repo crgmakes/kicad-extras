@@ -19,12 +19,6 @@ on:
       file-name:
         required: true
         type: string
-      version:
-        required: true
-        type: string
-      hash:
-        required: true
-        type: string
 jobs:
   export-ecad:
     name: Export ECAD
@@ -32,11 +26,23 @@ jobs:
     container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
       
     steps:
+    - name: Set manual version
+      if: github.event_name != 'release'
+      run: |
+        echo "VERSION=$(date "+%Y-%m-%d-%H-%M")" >> $GITHUB_ENV
+    - name: Set release version
+      if: github.event_name == 'release'
+      run: |
+        echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+    - name: Set hash
+      run: |
+        echo "HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
     - name: Update system
       run: |
         echo "Working Directory $(pwd)"
-        echo "version: ${{inputs.version}}"    
-        echo "hash: '${{inputs.hash}}'"
+        echo "version: ${{env.VERSION}}"    
+        echo "hash: '${{env.HASH}}'"
         apt update
         apt -y install git zip
 
@@ -81,10 +87,10 @@ jobs:
       run: |
         cd working/${{inputs.repo-name}}/pcb
         export RELEASE_DATE=$(date "+%m/%d/%Y @ %H:%M")
-        sed -i "s!<<hash>>!${{inputs.hash}}!" *.kicad_pcb
-        sed -i "s!<<hash>>!${{inputs.hash}}!" *.kicad_sch
-        sed -i "s!<<tag>>!${{inputs.version}}!" *.kicad_pcb
-        sed -i "s!<<tag>>!${{inputs.version}}!" *.kicad_sch
+        sed -i "s!<<hash>>!${{env.HASH}}!" *.kicad_pcb
+        sed -i "s!<<hash>>!${{env.HASH}}!" *.kicad_sch
+        sed -i "s!<<tag>>!${{env.VERSION}}!" *.kicad_pcb
+        sed -i "s!<<tag>>!${{env.VERSION}}!" *.kicad_sch
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
 
@@ -136,8 +142,8 @@ jobs:
         cd working/${{inputs.repo-name}}/
         kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production create_release_archive_4layer
         # production now contains ${{inputs.file-name}}-release.zip
-        mv production/${{inputs.file-name}}-release.zip ../../${{inputs.file-name}}-${{inputs.version}}.zip
-        # ${{inputs.file-name}}-${{inputs.version}}.zip now in home directory
+        mv production/${{inputs.file-name}}-release.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
+        # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
 
     # only generate panel during a release
     # generates fab files for the panel PCB, includes gerber, drill, images - does NOT include ibom, 3d model, schematic, or renders
@@ -155,8 +161,8 @@ jobs:
         mv production/${{inputs.file-name}}-panel.zip .
         # add panelized PCB to archive
         zip -u ${{inputs.file-name}}-panel.zip pcb/**
-        mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-${{inputs.version}}.zip
-        # home now contains ${{inputs.file-name}}-panel-${{inputs.version}}.zip
+        mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-${{env.VERSION}}.zip
+        # home now contains ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
 
     # # only runs if NOT a release
     # # Upload fab artifacts to workflow
@@ -174,9 +180,9 @@ jobs:
     - name: Upload Board Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: '${{inputs.name}} ${{inputs.version}}'
+        name: '${{inputs.name}} ${{env.VERSION}}'
         path: |
-          ${{inputs.file-name}}-${{inputs.version}}.zip
+          ${{inputs.file-name}}-${{env.VERSION}}.zip
         if-no-files-found: warn
         retention-days: 30
 
@@ -185,9 +191,9 @@ jobs:
       if: github.event_name == 'release'
       uses: actions/upload-artifact@v4
       with:
-        name: '${{inputs.name}} Panel ${{inputs.version}}'
+        name: '${{inputs.name}} Panel ${{env.VERSION}}'
         path: |
-          ${{inputs.file-name}}-panel-${{inputs.version}}.zip
+          ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
         if-no-files-found: warn
         retention-days: 30
 
@@ -196,7 +202,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'release'
       with:
-        name: '${{inputs.name}} ${{inputs.version}}'
+        name: '${{inputs.name}} ${{env.VERSION}}'
         files: |
-          ${{inputs.file-name}}-${{inputs.version}}.zip
-          ${{inputs.file-name}}-panel-${{inputs.version}}.zip
+          ${{inputs.file-name}}-${{env.VERSION}}.zip
+          ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
