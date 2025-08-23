@@ -82,58 +82,6 @@ preflight:
   drc: false
   check_zone_fills: true
 
-groups:
-  - name: jlc_fab
-    comment: "Fabrication files without gerbers"
-    outputs:
-      - create_drill_file
-      - create_pnp_jlc
-      - create_bom
-  - name: jlc_fab_2layer
-    comment: "Fabrication files with 2 layer gerbers"
-    outputs:
-      - create_gerber_2layer
-      - jlc_fab
-  - name: jlc_fab_4layer
-    comment: "Fabrication files with 4 layer gerbers"
-    outputs:
-      - create_gerber_4layer
-      - jlc_fab
-  - name: doc
-    comment: "ibom, schematic, top and bottom images"
-    outputs:
-      - create_ibom
-      - create_schematic_pdf
-      - create_board_top_image
-      - create_board_bottom_image
-      - create_pcb_drawing
-  - name: 3d
-    comment: "3d files"
-    outputs:
-      - create_step
-  - name: render
-    comment: "blender renders top, bottom, ortho"
-    outputs:
-      - create_top_render
-      - create_bottom_render
-      - create_ortho_render
-  - name: non_fab
-    comment: "All non-fabrication files -- doc, 3d, render"
-    outputs:
-      - doc
-      - 3d
-      - render
-  - name: jlc_all4
-    comment: "All 4 layer fabrication files -- fab_4layer, doc, 3d, render"
-    outputs:
-      - jlc_fab_4layer
-      - non_fab
-  - name: jlc_all2
-    comment: "All 2 layer fabrication files -- fab_2layer, doc, 3d, render"
-    outputs:
-      - jlc_fab_2layer
-      - non_fab
-
 outputs:
   - name: create_gerber_archive_2layer
     comment: "Generates a ZIP with 2 layer gerbers and drill file"
@@ -188,7 +136,7 @@ outputs:
         - from_output: create_pcb_drawing
 
   - name: create_panel_archive_2layer
-    comment: "Generates a ZIP with gerbers, drill, images"
+    comment: "Generates a ZIP with panel gerbers, drill, images without schematic or ibom"
     type: compress
     run_by_default: false
     options:
@@ -202,7 +150,7 @@ outputs:
         - from_output: create_pcb_drawing
 
   - name: create_panel_archive_4layer
-    comment: "Generates a ZIP with gerbers, drill, images"
+    comment: "Generates a ZIP with gerbers, drill, images without schematic or ibom"
     type: compress
     run_by_default: false
     options:
@@ -215,12 +163,12 @@ outputs:
         - from_output: create_board_bottom_image
         - from_output: create_pcb_drawing
 
-  - name: create_release_archive_2layer
+  - name: create_full_archive_2layer
     comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images"
     type: compress
     run_by_default: false
     options:
-      output: '%f-release.%x'
+      output: '%f-full.%x'
       files:
         - from_output: create_gerber_archive_2layer
         - from_output: create_pnp_jlc
@@ -235,12 +183,52 @@ outputs:
         - from_output: create_bottom_render
         - from_output: create_ortho_render
 
-  - name: create_release_archive_4layer
+  - name: create_full_archive_4layer
     comment: "Generates a ZIP file with all the fab and doc outputs"
     type: compress
     run_by_default: false
     options:
-      output: '%f-release.%x'
+      output: '%f-full.%x'
+      files:
+        - from_output: create_gerber_archive_4layer
+        - from_output: create_pnp_jlc
+        - from_output: create_bom
+        - from_output: create_ibom
+        - from_output: create_schematic_pdf
+        - from_output: create_board_top_image
+        - from_output: create_board_bottom_image
+        - from_output: create_pcb_drawing
+        - from_output: create_step
+        - from_output: create_top_render
+        - from_output: create_bottom_render
+        - from_output: create_ortho_render
+
+  - name: create_full_archive_2layer_draft
+    comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images at draft quality"
+    type: compress
+    run_by_default: false
+    options:
+      output: '%f-full.%x'
+      files:
+        - from_output: create_gerber_archive_2layer
+        - from_output: create_pnp_jlc
+        - from_output: create_bom
+        - from_output: create_ibom
+        - from_output: create_schematic_pdf
+        - from_output: create_board_top_image
+        - from_output: create_board_bottom_image
+        - from_output: create_pcb_drawing
+        - from_output: create_step
+        - from_output: create_top_render
+        - from_output: create_bottom_render
+        - from_output: create_ortho_render
+
+  - name: create_full_archive_4layer_draft
+    comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images at draft quality"
+    type: compress
+    run_by_default: false
+    options:
+      output: '%f-full.%x'
       files:
         - from_output: create_gerber_archive_4layer
         - from_output: create_pnp_jlc
@@ -316,23 +304,6 @@ outputs:
       use_gerber_x2_attributes: false
       use_gerber_net_attributes: false
       output: '%f.%i'
-      # use_aux_axis_as_origin: true
-      # exclude_edge_layer: true
-      # exclude_pads_from_silkscreen: true
-      # plot_sheet_reference: false
-      # plot_footprint_refs: true
-      # plot_footprint_values: false
-      # force_plot_invisible_refs_vals: false
-      # tent_vias: true
-      # use_protel_extensions: true
-      # create_gerber_job_file: false
-      # disable_aperture_macros: true
-      # gerber_precision: 4.6
-      # use_gerber_x2_attributes: false
-      # use_gerber_net_attributes: false
-      # line_width: 0.1
-      # subtract_mask_from_silk: true
-      # inner_extension_pattern: '.g%n'
 
     layers:
       - layer: F.Cu
@@ -515,7 +486,7 @@ outputs:
       subst_models: true
       cut_vias_in_body: true
 
-  - name: 'create_top_render'
+  - name: 'create_top_render_draft'
     comment: "3D render top"
     run_by_default: false
     type: blender_export
@@ -534,7 +505,7 @@ outputs:
         {'name': 'kibot_light4', 'pos_x': 'size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
         ]
 
-  - name: 'create_bottom_render'
+  - name: 'create_bottom_render_draft'
     comment: "3D render bottom"
     run_by_default: false
     type: blender_export
@@ -553,7 +524,7 @@ outputs:
         {'name': 'kibot_light4', 'pos_x': 'size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
         ]
 
-  - name: 'create_ortho_render'
+  - name: 'create_ortho_render_draft'
     comment: "3D render at 30 degrees"
     run_by_default: false
     type: blender_export
@@ -563,6 +534,64 @@ outputs:
         output: '%f-render-ortho.%x'
       render_options:
         samples: 10
+      point_of_view:
+        rotate_x: 30
+        rotate_z: -10
+      light: [
+        {'name': 'kibot_light1', 'pos_x': 'size*2', 'pos_y': 'size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        {'name': 'kibot_light2', 'pos_x': '-size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        {'name': 'kibot_light3', 'pos_x': '-size*2', 'pos_y': 'size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        {'name': 'kibot_light4', 'pos_x': 'size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        ]
+
+  - name: 'create_top_render'
+    comment: "3D render top"
+    run_by_default: false
+    type: blender_export
+    dir: doc/render
+    options:
+      outputs:
+        output: '%f-render-top.%x'
+      render_options:
+        samples: 100
+      point_of_view:
+        view: "top"
+      light: [
+        {'name': 'kibot_light1', 'pos_x': 'size*2', 'pos_y': 'size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        {'name': 'kibot_light2', 'pos_x': '-size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        {'name': 'kibot_light3', 'pos_x': '-size*2', 'pos_y': 'size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        {'name': 'kibot_light4', 'pos_x': 'size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        ]
+
+  - name: 'create_bottom_render'
+    comment: "3D render bottom"
+    run_by_default: false
+    type: blender_export
+    dir: doc/render
+    options:
+      outputs:
+        output: '%f-render-bottom.%x'
+      render_options:
+        samples: 100
+      point_of_view:
+        view: "bottom"
+      light: [
+        {'name': 'kibot_light1', 'pos_x': 'size*2', 'pos_y': 'size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        {'name': 'kibot_light2', 'pos_x': '-size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        {'name': 'kibot_light3', 'pos_x': '-size*2', 'pos_y': 'size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        {'name': 'kibot_light4', 'pos_x': 'size*2', 'pos_y': '-size*2', 'pos_z': 'size*4', 'energy': 1.25},
+        ]
+
+  - name: 'create_ortho_render'
+    comment: "3D render at 30 degrees"
+    run_by_default: false
+    type: blender_export
+    dir: doc/render
+    options:
+      outputs:
+        output: '%f-render-ortho.%x'
+      render_options:
+        samples: 100
       point_of_view:
         rotate_x: 30
         rotate_z: -10

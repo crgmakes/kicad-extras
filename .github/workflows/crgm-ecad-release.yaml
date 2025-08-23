@@ -93,55 +93,26 @@ jobs:
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
 
-    # # Update PCB with hash of current check in
-    # - name: Add Hash Release
-    #   run: |
-    #     cd working/${{inputs.repo-name}}
-    #     export COMMIT=$(git rev-parse --short HEAD)
-    #     export RELEASE_DATE=$(date "+%m/%d/%Y @ %H:%M")
-    #     echo "COMMIT = ${COMMIT}"    
-    #     echo "default: '${{ env.default }}'"
-    #     echo "ref: '${{ github.ref }}'"
-    #     echo "tag: '${{ github.event.release.tag_name }}'"
-    #     cd pcb
-    #     sed -i "s!<<hash>>!${COMMIT}!" *.kicad_pcb
-    #     sed -i "s!<<hash>>!${COMMIT}!" *.kicad_sch
-    #     sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
-    #     sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
-    #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_pcb
-    #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_sch
-
-    # # Update PCB with release tag
-    # - name: Add release tag (version)
-    #   if: github.event_name == 'release'
-    #   run: |
-    #     cd working/${{inputs.repo-name}}/pcb
-    #     echo "tag: ${{ github.ref_name }}"
-    #     echo "release tag: ${{ github.event.release.tag_name }}"
-    #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_pcb
-    #     sed -i "s!<<tag>>!${{ github.event.release.tag_name }}!" *.kicad_sch
-
-    # # generates fab files for the single PCB, includes gerber, drill, ibom, schematic, and images
-    # # NOTE: only run if this is not a release (e.g., run manually)
-    # - name: Generate Fabrication Files Manual
-    #   if: github.event_name != 'release'
-    #   run: |
-    #     echo "Working Directory: ${GITHUB_WORKSPACE}"
-    #     cd working/${{inputs.repo-name}}/
-    #     kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production create_pcb_archive_4layer
-    #     # production now contains ${{inputs.file-name}}.zip
-    #     mv production/${{inputs.file-name}}.zip ../..
-    #     # ${{inputs.file-name}}.zip now in home directory
-
-    # generates fab files for the single PCB, includes gerber, drill, ibom, schematic, images, 3d model, and renders
-    - name: Generate Single Fabrication Files
-      # if: github.event_name == 'release'
+    # generates draft fab files for the single PCB, includes gerber, drill, ibom, schematic, images, 3d model, and renders
+    - name: Generate Draft Fabrication Files
+      if: github.event_name != 'release'
       run: |
         echo "Working Directory: ${GITHUB_WORKSPACE}"
         cd working/${{inputs.repo-name}}/
-        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production create_release_archive_4layer
-        # production now contains ${{inputs.file-name}}-release.zip
-        mv production/${{inputs.file-name}}-release.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
+        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production create_full_archive_4layer_draft
+        # production now contains ${{inputs.file-name}}-full.zip
+        mv production/${{inputs.file-name}}-full.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
+        # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
+
+    # generates full fab files for the single PCB, includes gerber, drill, ibom, schematic, images, 3d model, and renders
+    - name: Generate Release Fabrication Files
+      if: github.event_name == 'release'
+      run: |
+        echo "Working Directory: ${GITHUB_WORKSPACE}"
+        cd working/${{inputs.repo-name}}/
+        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production create_full_archive_4layer
+        # production now contains ${{inputs.file-name}}-full.zip
+        mv production/${{inputs.file-name}}-full.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
         # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
 
     # only generate panel during a release
@@ -163,18 +134,6 @@ jobs:
         mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-${{env.VERSION}}.zip
         # home now contains ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
 
-    # # only runs if NOT a release
-    # # Upload fab artifacts to workflow
-    # - name: Upload Artifacts Manual
-    #   if: github.event_name != 'release'
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: aquarius-${{inputs.file-name}}
-    #     path: |
-    #       ${{inputs.file-name}}.zip
-    #     if-no-files-found: warn
-    #     retention-days: 10
-
     # Upload single board fab artifacts to workflow
     - name: Upload Board Artifacts
       uses: actions/upload-artifact@v4
@@ -183,7 +142,7 @@ jobs:
         path: |
           ${{inputs.file-name}}-${{env.VERSION}}.zip
         if-no-files-found: warn
-        retention-days: 30
+        retention-days: 10
 
     # Upload panel artifacts to workflow
     - name: Upload Panel Artifacts
@@ -194,7 +153,7 @@ jobs:
         path: |
           ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
         if-no-files-found: warn
-        retention-days: 30
+        retention-days: 10
 
     # Upload fab artifacts to release
     - name: Upload Release
