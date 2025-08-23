@@ -564,7 +564,7 @@ outputs:
       render_options:
         samples: 10
       point_of_view:
-        rotate_x: 20
+        rotate_x: 30
         rotate_z: -10
       light: [
         {'name': 'kibot_light1', 'pos_x': 'size*2', 'pos_y': 'size*2', 'pos_z': 'size*4', 'energy': 1.25},
