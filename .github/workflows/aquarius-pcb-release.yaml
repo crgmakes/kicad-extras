@@ -28,9 +28,6 @@ jobs:
     steps:
     - name: Update system
       run: |
-        echo "Working Directory $(pwd)"
-        echo "version: ${{env.VERSION}}"    
-        echo "hash: '${{env.HASH}}'"
         apt update
         apt -y install git zip
 
@@ -72,7 +69,7 @@ jobs:
     - name: Set manual version
       if: github.event_name != 'release'
       run: |
-        echo "VERSION=$(date "+%Y-%m-%d-%H-%M")" >> $GITHUB_ENV
+        echo "VERSION=$(date "+%m%d%y-%H%M")" >> $GITHUB_ENV
     - name: Set release version
       if: github.event_name == 'release'
       run: |
@@ -83,8 +80,10 @@ jobs:
 
     # Update PCB with version, hash, and date
     - name: Update build variables
-      # if: github.event_name != 'release'
       run: |
+        echo "Working Directory $(pwd)"
+        echo "version: ${{env.VERSION}}"    
+        echo "hash: '${{env.HASH}}'"
         cd working/${{inputs.repo-name}}/pcb
         export RELEASE_DATE=$(date "+%m/%d/%Y @ %H:%M")
         sed -i "s!<<hash>>!${{env.HASH}}!" *.kicad_pcb
