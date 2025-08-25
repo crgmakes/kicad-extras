@@ -137,31 +137,32 @@ jobs:
 
     # Upload single board fab artifacts to workflow
     - name: Upload Board Artifacts
+      if: github.event_name != 'release'
       uses: actions/upload-artifact@v4
       with:
-        name: '${{inputs.name}} ${{env.VERSION}}'
+        # name: '${{inputs.name}} ${{env.VERSION}}'
         path: |
           ${{inputs.file-name}}-${{env.VERSION}}.zip
         if-no-files-found: warn
         retention-days: 10
 
-    # Upload panel artifacts to workflow
-    - name: Upload Panel Artifacts
-      if: github.event_name == 'release'
-      uses: actions/upload-artifact@v4
-      with:
-        name: '${{inputs.name}} Panel ${{env.VERSION}}'
-        path: |
-          ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
-        if-no-files-found: warn
-        retention-days: 10
+    # # Upload panel artifacts to workflow
+    # - name: Upload Panel Artifacts
+    #   if: github.event_name == 'release'
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     # name: '${{inputs.name}} Panel ${{env.VERSION}}'
+    #     path: |
+    #       ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
+    #     if-no-files-found: warn
+    #     retention-days: 10
 
     # Upload fab artifacts to release
     - name: Upload Release
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'release'
       with:
-        name: '${{inputs.name}} ${{env.VERSION}}'
+        # name: '${{inputs.name}} ${{env.VERSION}}'
         files: |
           ${{inputs.file-name}}-${{env.VERSION}}.zip
           ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
