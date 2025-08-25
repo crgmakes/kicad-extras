@@ -219,9 +219,9 @@ outputs:
         - from_output: create_board_bottom_image
         - from_output: create_pcb_drawing
         - from_output: create_step
-        - from_output: create_top_render
-        - from_output: create_bottom_render
-        - from_output: create_ortho_render
+        - from_output: create_top_render_draft
+        - from_output: create_bottom_render_draft
+        - from_output: create_ortho_render_draft
 
   - name: create_full_archive_4layer_draft
     comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images at draft quality"
@@ -239,9 +239,9 @@ outputs:
         - from_output: create_board_bottom_image
         - from_output: create_pcb_drawing
         - from_output: create_step
-        - from_output: create_top_render
-        - from_output: create_bottom_render
-        - from_output: create_ortho_render
+        - from_output: create_top_render_draft
+        - from_output: create_bottom_render_draft
+        - from_output: create_ortho_render_draft
 
   - name: 'create_gerber_2layer'
     comment: "Generate JLC Gerbers for 2 layer board"

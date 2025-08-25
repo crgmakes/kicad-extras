@@ -76,6 +76,7 @@ jobs:
         echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
     - name: Set hash
       run: |
+        cd working/${{inputs.repo-name}}
         echo "HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     # Update PCB with version, hash, and date
