@@ -572,7 +572,7 @@ outputs:
       outputs:
         output: '%f-render-bottom.%x'
       render_options:
-        samples: 100
+        samples: 10
       point_of_view:
         view: "bottom"
       light: [
@@ -591,7 +591,7 @@ outputs:
       outputs:
         output: '%f-render-ortho.%x'
       render_options:
-        samples: 100
+        samples: 10
       point_of_view:
         rotate_x: 30
         rotate_z: -10
