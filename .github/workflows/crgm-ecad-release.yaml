@@ -137,7 +137,7 @@ jobs:
     # only generate panel during a release
     # generates fab files for the panel PCB, includes gerber, drill, images - does NOT include ibom, 3d model, schematic, or renders
     - name: Generate Panel Release
-      if: github.event_name == 'release'
+      # if: github.event_name == 'release'
       run: |
         cd working/${{inputs.repo-name}}/pcb/panel
         rm -rf production
