@@ -14,6 +14,7 @@ global:
       # - KICAD_USER_LIBRARY: ${HOME}/kicad-library # only works locally not in git
       - KICAD_USER_LIBRARY: ${GITHUB_WORKSPACE}/working/kicad-library # only works in git
       - KICAD_USER_MODEL_DIR: ${KICAD_USER_LIBRARY}/models
+  time_reformat: false
 
 filters:
   - name: 'exclude_common'
@@ -82,6 +83,83 @@ preflight:
   drc: false
   check_zone_fills: true
 
+groups:
+  - name: jlc_bom
+    comment: "Generate bom, and PnP files for JLCPCB"
+    outputs:
+      - create_pnp_jlc
+      - create_bom
+  - name: jlc_fab_2
+    comment: "Generate gerber, bom, and PnP files for JLCPCB"
+    outputs:
+      - create_gerber_2layer
+      - create_drill_file
+      - jlc_bom
+  - name: jlc_fab_4
+    comment: "Generate gerber, bom, and PnP files for JLCPCB"
+    outputs:
+      - create_gerber_4layer
+      - create_drill_file
+      - jlc_bom
+  - name: images
+    comment: "generates top and bottom PCB images"
+    outputs:
+      - create_board_top_image
+      - create_board_bottom_image
+  - name: doc
+    comment: "generates ibom, schematic, top and bottom images"
+    outputs:
+      - create_ibom
+      - create_schematic_pdf
+      - create_board_top_image
+      - create_board_bottom_image
+      - create_pcb_drawing
+  - name: 3d
+    comment: "3d files"
+    outputs:
+      - create_step
+  - name: render_draft
+    comment: "Generate draft top, bottom, ortho renders (1 sample)"
+    outputs:
+      - create_top_render_draft
+      - create_bottom_render_draft
+      - create_ortho_render_draft
+  - name: render
+    comment: "Generate top, bottom, ortho renders (10 samples)"
+    outputs:
+      - create_top_render
+      - create_bottom_render
+      - create_ortho_render
+  - name: full_ecad_2
+    comment: "Generate full ECAD files; gerber, drill, pnp, ibom, images, drawing, model, render"
+    outputs:
+      - jlc_fab_2
+      - doc
+      - 3d
+      - render
+  - name: full_ecad_4
+    comment: "Generate full ECAD files; gerber, drill, pnp, ibom, images, drawing, model, render"
+    outputs:
+      - jlc_fab_4
+      - doc
+      - 3d
+      - render
+  - name: panel_ecad_2
+    comment: "Generate ECAD files for panel; gerber, drill, pnp, images, drawing"
+    outputs:
+      - jlc_fab_2
+      - create_board_top_image
+      - create_board_bottom_image
+      - create_pcb_drawing
+  - name: panel_ecad_4
+    comment: "Generate ECAD files for panel; gerber, drill, pnp, images, drawing"
+    outputs:
+      - jlc_fab_4
+      - create_board_top_image
+      - create_board_bottom_image
+      - create_pcb_drawing
+
+
 outputs:
   - name: create_gerber_archive_2layer
     comment: "Generates a ZIP with 2 layer gerbers and drill file"
@@ -126,7 +204,7 @@ outputs:
     options:
       output: '%f.%x'
       files:
-        - from_output: create_gerber_archive_2layer
+        - from_output: create_gerber_archive_4layer
         - from_output: create_pnp_jlc
         - from_output: create_bom
         - from_output: create_ibom
@@ -495,7 +573,7 @@ outputs:
       outputs:
         output: '%f-render-top.%x'
       render_options:
-        samples: 10
+        samples: 1
       point_of_view:
         view: "top"
       light: [
@@ -514,7 +592,7 @@ outputs:
       outputs:
         output: '%f-render-bottom.%x'
       render_options:
-        samples: 10
+        samples: 1
       point_of_view:
         view: "bottom"
       light: [
@@ -533,7 +611,7 @@ outputs:
       outputs:
         output: '%f-render-ortho.%x'
       render_options:
-        samples: 10
+        samples: 1
       point_of_view:
         rotate_x: 30
         rotate_z: -10
@@ -553,7 +631,7 @@ outputs:
       outputs:
         output: '%f-render-top.%x'
       render_options:
-        samples: 100
+        samples: 10
       point_of_view:
         view: "top"
       light: [
@@ -603,7 +681,7 @@ outputs:
         ]
 
   - name: 'create_pcb_drawing'
-    comment: "Creates PDF of PCB with drawing layer enabled"
+    comment: "Creates PDF of PCB with drawing and fab layer enabled"
     run_by_default: false
     type: pcb_print
     dir: doc/pcb
@@ -620,6 +698,7 @@ outputs:
           # - "F.Cu"
           - "User.Drawings"
           - "User.Comments"
+          - "F.Fab"
           - "Edge.Cuts"
 
   - name: 'create_pcb_drawing_silk'
