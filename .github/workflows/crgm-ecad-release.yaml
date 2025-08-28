@@ -153,7 +153,7 @@ jobs:
         zip -r ${{inputs.file-name}}-panel.zip pcb
         cd production
         zip -jr ${{inputs.file-name}}-panel-gerber.zip gerber 
-        zip -ur ../${{inputs.file-name}}-panel.zip {{inputs.file-name}}-panel-gerber.zip doc pnp
+        zip -ur ../${{inputs.file-name}}-panel.zip ${{inputs.file-name}}-panel-gerber.zip doc pnp
         cd ..
         mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-${{env.VERSION}}.zip
         # home now contains ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
