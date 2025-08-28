@@ -100,16 +100,19 @@ jobs:
       run: |
         echo "Working Directory: ${GITHUB_WORKSPACE}"
         cd working/${{inputs.repo-name}}/
+        date
         kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc 3d
+        date
         cd production
-        zip -r ${{inputs.repo-name}}-gerber.zip gerber
+        zip -jr ${{inputs.repo-name}}-gerber.zip gerber
         cd doc
         zip -r ../${{inputs.repo-name}}.zip *
         cd ..
         zip -u ${{inputs.repo-name}}.zip ${{inputs.repo-name}}-gerber.zip
         # production now contains ${{inputs.file-name}}.zip
-        mv ${{inputs.file-name}}.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
+        mv ${{inputs.file-name}}.zip ../../../${{inputs.file-name}}-${{env.VERSION}}.zip
         # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
+        date
 
     # generates full fab files for the single PCB, includes gerber, drill, ibom, schematic, images, 3d model, and renders
     - name: Generate Release Fabrication Files
@@ -117,7 +120,9 @@ jobs:
       run: |
         echo "Working Directory: ${GITHUB_WORKSPACE}"
         cd working/${{inputs.repo-name}}/
+        date
         kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc 3d render
+        date
         cd production
         zip -r ${{inputs.repo-name}}-gerber.zip gerber
         cd doc
@@ -125,8 +130,9 @@ jobs:
         cd ..
         zip -u ${{inputs.repo-name}}.zip ${{inputs.repo-name}}-gerber.zip
         # production now contains ${{inputs.file-name}}.zip
-        mv ${{inputs.file-name}}.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
+        mv ${{inputs.file-name}}.zip ../../../${{inputs.file-name}}-${{env.VERSION}}.zip
         # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
+        date
 
     # only generate panel during a release
     # generates fab files for the panel PCB, includes gerber, drill, images - does NOT include ibom, 3d model, schematic, or renders
@@ -136,10 +142,14 @@ jobs:
         cd working/${{inputs.repo-name}}/pcb/panel
         rm -rf production
         # create the panelized PCB
+        date
         kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e ../${{inputs.file-name}}.kicad_sch -b ../${{inputs.file-name}}.kicad_pcb -d pcb create_panel
+        date
         # working/${{inputs.repo-name}}/pcb/panel/pcb now contains ${{inputs.file-name}}-panel.kicad_pcb
         # create fab files for panel; does not include renders and 3d model
+        date
         kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e ../${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}-panel.kicad_pcb -d production panel_ecad_4
+        date
         zip -r ${{inputs.file-name}}-panel.zip pcb
         cd production
         zip -jr ${{inputs.file-name}}-panel-gerber.zip gerber 
@@ -147,6 +157,7 @@ jobs:
         cd ..
         mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-${{env.VERSION}}.zip
         # home now contains ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
+        date
 
     # Upload single board fab artifacts to workflow
     - name: Upload Board Artifacts
