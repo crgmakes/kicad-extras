@@ -412,6 +412,9 @@ outputs:
       metric_units: false
       pth_and_npth_single_file: true
       use_aux_axis_as_origin: true
+      map:
+        output: "%f-drill-map.%x"
+        type: pdf
 
   - name: 'create_pnp_default'
     comment: 'Generate generic PnP File'
