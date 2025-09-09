@@ -108,7 +108,7 @@ jobs:
         cd doc
         zip -r ../${{inputs.file-name}}.zip *
         cd ..
-        zip -u ${{inputs.file-name}}.zip $${{inputs.file-name}}-gerber.zip
+        zip -u ${{inputs.file-name}}.zip ${{inputs.file-name}}-gerber.zip
         # production now contains ${{inputs.file-name}}.zip
         mv ${{inputs.file-name}}.zip ../../../${{inputs.file-name}}-${{env.VERSION}}.zip
         # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
