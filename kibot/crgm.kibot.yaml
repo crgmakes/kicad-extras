@@ -59,7 +59,7 @@ filters:
       - ["^SOTFL50P160X60", 270]
       - ["^CP_Elec_6.3x7.7", 0]
       - ["^Bourns_TC33X_Vertical", -90]
-      - ["^LTR-303ALS-01", 90]
+      - ["^LTR-303ALS-01", -90]
     offsets:
       - ["^TO-252-2", "3.3,0"]
       - ["^Converter_ACDC_MeanWell_IRM-10-xx_THT", "-19.2, 5.5"]
