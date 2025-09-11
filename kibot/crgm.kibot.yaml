@@ -19,7 +19,7 @@ global:
 filters:
   - name: 'exclude_common'
     type: 'generic'
-    comment: 'Excludes test points, logos, and fiducials'
+    comment: 'Excludes test points, logos, symbols, and fiducials'
     exclude_any:
       - column: Reference
         regex: '^TP[0-9]*'
@@ -31,6 +31,8 @@ filters:
         regex: '^KiKit_'
       - column: Reference
         regex: '^kibuzzard-'
+      - column: Reference
+        regex: '^SYM'
   - name: only_jlc_parts
     comment: 'Only parts with JLC (LCSC) code'
     type: generic
