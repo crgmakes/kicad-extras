@@ -160,7 +160,6 @@ groups:
       - create_board_bottom_image
       - create_pcb_drawing
 
-
 outputs:
   - name: create_gerber_archive_2layer
     comment: "Generates a ZIP with 2 layer gerbers and drill file"
@@ -688,7 +687,7 @@ outputs:
     comment: "Creates PDF of PCB with drawing and fab layer enabled"
     run_by_default: false
     type: pcb_print
-    dir: doc/pcb
+    dir: doc/drawing
     options:
       output: '%f-pcb-drawing.%x'
       #force_edge_cuts: true
@@ -709,7 +708,7 @@ outputs:
     comment: "Creates PDF of PCB with drawing layer enabled"
     run_by_default: false
     type: pcb_print
-    dir: doc/pcb
+    dir: doc/drawing
     options:
       output: '%f-pcb-drawing.%x'
       #force_edge_cuts: true

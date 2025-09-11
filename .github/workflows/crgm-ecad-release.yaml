@@ -123,14 +123,13 @@ jobs:
         date
         kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc 3d render
         date
+        zip -r ${{inputs.file-name}}.zip pcb
         cd production
+        zip -ur ../${{inputs.file-name}}.zip pnp doc
         zip -jr ${{inputs.file-name}}-gerber.zip gerber
-        cd doc
-        zip -r ../${{inputs.file-name}}.zip *
+        zip -u ../${{inputs.file-name}}.zip ${{inputs.file-name}}-gerber.zip
         cd ..
-        zip -u ${{inputs.file-name}}.zip ${{inputs.file-name}}-gerber.zip
-        # production now contains ${{inputs.file-name}}.zip
-        mv ${{inputs.file-name}}.zip ../../../${{inputs.file-name}}-${{env.VERSION}}.zip
+        mv ${{inputs.file-name}}.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
         # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
         date
 
