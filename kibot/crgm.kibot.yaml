@@ -59,6 +59,7 @@ filters:
       # - ["^MSOP-", 270.0]
       # - ["^USB_C_Receptacle_Palconn", 180.0]
       - ["^SOTFL50P160X60", 270]
+      - ["^SOP65P640X110-20N", 90]
       - ["^CP_Elec_6.3x7.7", 0]
       - ["^Bourns_TC33X_Vertical", -90]
       - ["^LTR-303ALS-01", -90]
