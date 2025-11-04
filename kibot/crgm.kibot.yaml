@@ -561,7 +561,7 @@ outputs:
     options:
       output: '%f.%x'
       # download: false
-      # download_lcsc: false
+      download_lcsc: false
       download: true
       # download_lcsc: true
       include_pads: true
