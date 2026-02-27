@@ -1,0 +1,192 @@
+# Aquarius - Automation Simplified
+#
+# @brief Git script for exporting PCB ECAD data
+# @note script runs when called from another script
+# @note contains both manual and release jobs
+# @date 2/26/26
+# @author cyberreefguru
+# (c) CRG Makes 2026
+name: Aquarius-PCB-Release-2-Layer
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      repo-name:
+        required: true
+        type: string
+      file-name:
+        required: true
+        type: string
+jobs:
+  export-ecad:
+    name: Export ECAD
+    runs-on: ubuntu-latest
+    container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
+      
+    steps:
+    - name: Update system
+      run: |
+        apt update
+        apt -y install git zip
+
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        path: working/${{inputs.repo-name}}
+
+    - name: Checkout Extras
+      uses: actions/checkout@v4
+      with:
+        repository: crgmakes/kicad-extras
+        path: working/kicad-extras
+
+    - name: Checkout CRGM Library
+      uses: actions/checkout@v4
+      with:
+        repository: crgmakes/kicad-library
+        path: working/kicad-library
+
+    - name: Checkout PcbDraw Library
+      uses: actions/checkout@v4
+      with:
+        repository: yaqwsx/PcbDraw-Lib
+        path: working/PcbDraw-Lib
+
+    - name: Checkout Fab Kit Library
+      uses: actions/checkout@v4
+      with:
+        repository: bennymeg/Fabrication-Toolkit
+        path: working/Fabrication-Toolkit
+
+    - name: Update fonts
+      run: |
+        mkdir -p /usr/share/fonts/
+        cp working/kicad-extras/fonts/* /usr/share/fonts/
+        fc-cache -f -v
+
+    - name: Set manual version
+      if: github.event_name != 'release'
+      run: |
+        echo "VERSION=$(date "+%m%d%y-%H%M")" >> $GITHUB_ENV
+    - name: Set release version
+      if: github.event_name == 'release'
+      run: |
+        echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+    - name: Set hash
+      run: |
+        cd working/${{inputs.repo-name}}
+        echo "HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    # Update PCB with version, hash, and date
+    - name: Update build variables
+      run: |
+        echo "Working Directory $(pwd)"
+        echo "version: ${{env.VERSION}}"    
+        echo "hash: '${{env.HASH}}'"
+        cd working/${{inputs.repo-name}}/pcb
+        export RELEASE_DATE=$(date "+%m/%d/%Y @ %H:%M")
+        sed -i "s!<<hash>>!${{env.HASH}}!" *.kicad_pcb
+        sed -i "s!<<hash>>!${{env.HASH}}!" *.kicad_sch
+        sed -i "s!<<tag>>!${{env.VERSION}}!" *.kicad_pcb
+        sed -i "s!<<tag>>!${{env.VERSION}}!" *.kicad_sch
+        sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
+        sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
+
+    # generates draft fab files for the single PCB, includes gerber, drill, ibom, schematic, images, 3d model, and renders
+    - name: Generate Draft Fabrication Files
+      if: github.event_name != 'release'
+      run: |
+        echo "Working Directory: ${GITHUB_WORKSPACE}"
+        cd working/${{inputs.repo-name}}/
+        date
+        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_2 doc 3d
+        date
+        cd production
+        zip -jr ${{inputs.file-name}}-gerber.zip gerber
+        cd doc
+        zip -r ../${{inputs.file-name}}.zip *
+        cd ..
+        zip -u ${{inputs.file-name}}.zip ${{inputs.file-name}}-gerber.zip
+        # production now contains ${{inputs.file-name}}.zip
+        mv ${{inputs.file-name}}.zip ../../../${{inputs.file-name}}-${{env.VERSION}}.zip
+        # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
+        date
+
+    # generates full fab files for the single PCB, includes gerber, drill, ibom, schematic, images, 3d model, and renders
+    - name: Generate Release Fabrication Files
+      if: github.event_name == 'release'
+      run: |
+        echo "Working Directory: ${GITHUB_WORKSPACE}"
+        cd working/${{inputs.repo-name}}/
+        date
+        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_2 doc 3d render
+        date
+        zip -r ${{inputs.file-name}}.zip pcb
+        cd production
+        zip -ur ../${{inputs.file-name}}.zip pnp doc
+        zip -jr ${{inputs.file-name}}-gerber.zip gerber
+        zip -u ../${{inputs.file-name}}.zip ${{inputs.file-name}}-gerber.zip
+        cd ..
+        mv ${{inputs.file-name}}.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
+        # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
+        date
+
+    # only generate panel during a release
+    # generates fab files for the panel PCB, includes gerber, drill, images - does NOT include ibom, 3d model, schematic, or renders
+    - name: Generate Panel Release
+      # if: github.event_name == 'release'
+      run: |
+        cd working/${{inputs.repo-name}}/pcb/panel
+        rm -rf production
+        # create the panelized PCB
+        date
+        kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e ../${{inputs.file-name}}.kicad_sch -b ../${{inputs.file-name}}.kicad_pcb -d pcb create_panel
+        date
+        # working/${{inputs.repo-name}}/pcb/panel/pcb now contains ${{inputs.file-name}}-panel.kicad_pcb
+        # create fab files for panel; does not include renders and 3d model
+        date
+        kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e ../${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}-panel.kicad_pcb -d production panel_ecad_2
+        date
+        zip -r ${{inputs.file-name}}-panel.zip pcb
+        cd production
+        zip -jr ${{inputs.file-name}}-panel-gerber.zip gerber 
+        zip -ur ../${{inputs.file-name}}-panel.zip ${{inputs.file-name}}-panel-gerber.zip doc pnp
+        cd ..
+        mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-${{env.VERSION}}.zip
+        # home now contains ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
+        date
+
+    # Upload single board fab artifacts to workflow
+    - name: Upload Board Artifacts
+      if: github.event_name != 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: '${{inputs.name}} ${{env.VERSION}}'
+        path: |
+          ${{inputs.file-name}}-${{env.VERSION}}.zip
+          ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
+        if-no-files-found: warn
+        retention-days: 10
+
+    # # Upload panel artifacts to workflow
+    # - name: Upload Panel Artifacts
+    #   if: github.event_name == 'release'
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     # name: '${{inputs.name}} Panel ${{env.VERSION}}'
+    #     path: |
+    #       ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
+    #     if-no-files-found: warn
+    #     retention-days: 10
+
+    # Upload fab artifacts to release
+    - name: Upload Release
+      uses: softprops/action-gh-release@v1
+      if: github.event_name == 'release'
+      with:
+        # name: '${{inputs.name}} ${{env.VERSION}}'
+        files: |
+          ${{inputs.file-name}}-${{env.VERSION}}.zip
+          ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
