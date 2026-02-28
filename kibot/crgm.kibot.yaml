@@ -44,10 +44,15 @@ filters:
     type: rot_footprint
     rotations:
       - ["^QFN-28-1EP_6x6mm_P0.65mm_EP4.25x4.25mm", -90.0]
+      - ["^JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal", 180.0]
+      - ["^JST_SH_SM04B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal", 180.0]
+      - ["^JST_SH_SM06B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal", 180.0]
+      - ["^JST_SH_SM08B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal", 180.0]
       - ["^JST_SH_BM08B-SRSS-TB_1x08-1MP_P1.00mm_Vertical", 180.0]
       - ["^JST_SH_BM06B-SRSS-TB_1x06-1MP_P1.00mm_Vertical", 180.0]
       - ["^JST_SH_BM04B-SRSS-TB_1x04-1MP_P1.00mm_Vertical", 180.0]
       - ["^JST_SH_BM03B-SRSS-TB_1x03-1MP_P1.00mm_Vertical", 180.0]
+      - ["^LED_WS2812B_PLCC4_5.0x5.0mm_P3.2mm", -90.0]
       - ["^LED_WS2812B-2020_PLCC4_2.0x2.0mm", 0.0]
       - ["^SOT-523", 180.0]
       - ["^SOT-666", -90.0]
