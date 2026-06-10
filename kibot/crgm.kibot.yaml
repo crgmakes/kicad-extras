@@ -14,6 +14,8 @@ global:
       # - KICAD_USER_LIBRARY: ${HOME}/kicad-library # only works locally not in git
       - KICAD_USER_LIBRARY: ${GITHUB_WORKSPACE}/working/kicad-library # only works in git
       - KICAD_USER_MODEL_DIR: ${KICAD_USER_LIBRARY}/models
+      - PROJECT_VERSION: ${env.VERSION}
+      - PROJECT_RELEASE_DATE: ${RELEASE_DATE}
   time_reformat: false
 
 filters:
@@ -109,6 +111,7 @@ groups:
       - create_gerber_2layer
       - create_drill_file
       - jlc_bom
+  #used
   - name: jlc_fab_4
     comment: "Generate gerber, bom, and PnP files for JLCPCB"
     outputs:
@@ -120,6 +123,7 @@ groups:
     outputs:
       - create_board_top_image
       - create_board_bottom_image
+  #used
   - name: doc
     comment: "generates ibom, schematic, top and bottom images"
     outputs:
@@ -128,6 +132,7 @@ groups:
       - create_board_top_image
       - create_board_bottom_image
       - create_pcb_drawing
+  #used
   - name: 3d
     comment: "3d files"
     outputs:
@@ -138,6 +143,7 @@ groups:
       - create_top_render_draft
       - create_bottom_render_draft
       - create_ortho_render_draft
+  #used
   - name: render
     comment: "Generate top, bottom, ortho renders (10 samples)"
     outputs:
@@ -174,165 +180,165 @@ groups:
       - create_pcb_drawing
 
 outputs:
-  - name: create_gerber_archive_2layer
-    comment: "Generates a ZIP with 2 layer gerbers and drill file"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f-gerber.%x'
-      files:
-        - from_output: create_gerber_2layer
-        - from_output: create_drill_file
+  # - name: create_gerber_archive_2layer
+  #   comment: "Generates a ZIP with 2 layer gerbers and drill file"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f-gerber.%x'
+  #     files:
+  #       - from_output: create_gerber_2layer
+  #       - from_output: create_drill_file
 
-  - name: create_gerber_archive_4layer
-    comment: "Generates a ZIP with 4 layer gerbers and drill file"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f-gerber.%x'
-      files:
-        - from_output: create_gerber_4layer
-        - from_output: create_drill_file
+  # - name: create_gerber_archive_4layer
+  #   comment: "Generates a ZIP with 4 layer gerbers and drill file"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f-gerber.%x'
+  #     files:
+  #       - from_output: create_gerber_4layer
+  #       - from_output: create_drill_file
 
-  - name: create_pcb_archive_2layer
-    comment: "Generates a ZIP with gerbers, drill, ibom, schematic, images"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f.%x'
-      files:
-        - from_output: create_gerber_archive_2layer
-        - from_output: create_pnp_jlc
-        - from_output: create_bom
-        - from_output: create_ibom
-        - from_output: create_schematic_pdf
-        - from_output: create_board_top_image
-        - from_output: create_board_bottom_image
-        - from_output: create_pcb_drawing
+  # - name: create_pcb_archive_2layer
+  #   comment: "Generates a ZIP with gerbers, drill, ibom, schematic, images"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f.%x'
+  #     files:
+  #       - from_output: create_gerber_archive_2layer
+  #       - from_output: create_pnp_jlc
+  #       - from_output: create_bom
+  #       - from_output: create_ibom
+  #       - from_output: create_schematic_pdf
+  #       - from_output: create_board_top_image
+  #       - from_output: create_board_bottom_image
+  #       - from_output: create_pcb_drawing
 
-  - name: create_pcb_archive_4layer
-    comment: "Generates a ZIP with gerbers, drill, ibom, schematic, images"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f.%x'
-      files:
-        - from_output: create_gerber_archive_4layer
-        - from_output: create_pnp_jlc
-        - from_output: create_bom
-        - from_output: create_ibom
-        - from_output: create_schematic_pdf
-        - from_output: create_board_top_image
-        - from_output: create_board_bottom_image
-        - from_output: create_pcb_drawing
+  # - name: create_pcb_archive_4layer
+  #   comment: "Generates a ZIP with gerbers, drill, ibom, schematic, images"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f.%x'
+  #     files:
+  #       - from_output: create_gerber_archive_4layer
+  #       - from_output: create_pnp_jlc
+  #       - from_output: create_bom
+  #       - from_output: create_ibom
+  #       - from_output: create_schematic_pdf
+  #       - from_output: create_board_top_image
+  #       - from_output: create_board_bottom_image
+  #       - from_output: create_pcb_drawing
 
-  - name: create_panel_archive_2layer
-    comment: "Generates a ZIP with panel gerbers, drill, images without schematic or ibom"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f.%x'
-      files:
-        - from_output: create_gerber_archive_2layer
-        - from_output: create_pnp_jlc
-        - from_output: create_bom
-        - from_output: create_board_top_image
-        - from_output: create_board_bottom_image
-        - from_output: create_pcb_drawing
+  # - name: create_panel_archive_2layer
+  #   comment: "Generates a ZIP with panel gerbers, drill, images without schematic or ibom"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f.%x'
+  #     files:
+  #       - from_output: create_gerber_archive_2layer
+  #       - from_output: create_pnp_jlc
+  #       - from_output: create_bom
+  #       - from_output: create_board_top_image
+  #       - from_output: create_board_bottom_image
+  #       - from_output: create_pcb_drawing
 
-  - name: create_panel_archive_4layer
-    comment: "Generates a ZIP with gerbers, drill, images without schematic or ibom"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f.%x'
-      files:
-        - from_output: create_gerber_archive_4layer
-        - from_output: create_pnp_jlc
-        - from_output: create_bom
-        - from_output: create_board_top_image
-        - from_output: create_board_bottom_image
-        - from_output: create_pcb_drawing
+  # - name: create_panel_archive_4layer
+  #   comment: "Generates a ZIP with gerbers, drill, images without schematic or ibom"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f.%x'
+  #     files:
+  #       - from_output: create_gerber_archive_4layer
+  #       - from_output: create_pnp_jlc
+  #       - from_output: create_bom
+  #       - from_output: create_board_top_image
+  #       - from_output: create_board_bottom_image
+  #       - from_output: create_pcb_drawing
 
-  - name: create_full_archive_2layer
-    comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f-full.%x'
-      files:
-        - from_output: create_gerber_archive_2layer
-        - from_output: create_pnp_jlc
-        - from_output: create_bom
-        - from_output: create_ibom
-        - from_output: create_schematic_pdf
-        - from_output: create_board_top_image
-        - from_output: create_board_bottom_image
-        - from_output: create_pcb_drawing
-        - from_output: create_step
-        - from_output: create_top_render
-        - from_output: create_bottom_render
-        - from_output: create_ortho_render
+  # - name: create_full_archive_2layer
+  #   comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f-full.%x'
+  #     files:
+  #       - from_output: create_gerber_archive_2layer
+  #       - from_output: create_pnp_jlc
+  #       - from_output: create_bom
+  #       - from_output: create_ibom
+  #       - from_output: create_schematic_pdf
+  #       - from_output: create_board_top_image
+  #       - from_output: create_board_bottom_image
+  #       - from_output: create_pcb_drawing
+  #       - from_output: create_step
+  #       - from_output: create_top_render
+  #       - from_output: create_bottom_render
+  #       - from_output: create_ortho_render
 
-  - name: create_full_archive_4layer
-    comment: "Generates a ZIP file with all the fab and doc outputs"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f-full.%x'
-      files:
-        - from_output: create_gerber_archive_4layer
-        - from_output: create_pnp_jlc
-        - from_output: create_bom
-        - from_output: create_ibom
-        - from_output: create_schematic_pdf
-        - from_output: create_board_top_image
-        - from_output: create_board_bottom_image
-        - from_output: create_pcb_drawing
-        - from_output: create_step
-        - from_output: create_top_render
-        - from_output: create_bottom_render
-        - from_output: create_ortho_render
+  # - name: create_full_archive_4layer
+  #   comment: "Generates a ZIP file with all the fab and doc outputs"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f-full.%x'
+  #     files:
+  #       - from_output: create_gerber_archive_4layer
+  #       - from_output: create_pnp_jlc
+  #       - from_output: create_bom
+  #       - from_output: create_ibom
+  #       - from_output: create_schematic_pdf
+  #       - from_output: create_board_top_image
+  #       - from_output: create_board_bottom_image
+  #       - from_output: create_pcb_drawing
+  #       - from_output: create_step
+  #       - from_output: create_top_render
+  #       - from_output: create_bottom_render
+  #       - from_output: create_ortho_render
 
-  - name: create_full_archive_2layer_draft
-    comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images at draft quality"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f-full.%x'
-      files:
-        - from_output: create_gerber_archive_2layer
-        - from_output: create_pnp_jlc
-        - from_output: create_bom
-        - from_output: create_ibom
-        - from_output: create_schematic_pdf
-        - from_output: create_board_top_image
-        - from_output: create_board_bottom_image
-        - from_output: create_pcb_drawing
-        - from_output: create_step
-        - from_output: create_top_render_draft
-        - from_output: create_bottom_render_draft
-        - from_output: create_ortho_render_draft
+  # - name: create_full_archive_2layer_draft
+  #   comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images at draft quality"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f-full.%x'
+  #     files:
+  #       - from_output: create_gerber_archive_2layer
+  #       - from_output: create_pnp_jlc
+  #       - from_output: create_bom
+  #       - from_output: create_ibom
+  #       - from_output: create_schematic_pdf
+  #       - from_output: create_board_top_image
+  #       - from_output: create_board_bottom_image
+  #       - from_output: create_pcb_drawing
+  #       - from_output: create_step
+  #       - from_output: create_top_render_draft
+  #       - from_output: create_bottom_render_draft
+  #       - from_output: create_ortho_render_draft
 
-  - name: create_full_archive_4layer_draft
-    comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images at draft quality"
-    type: compress
-    run_by_default: false
-    options:
-      output: '%f-full.%x'
-      files:
-        - from_output: create_gerber_archive_4layer
-        - from_output: create_pnp_jlc
-        - from_output: create_bom
-        - from_output: create_ibom
-        - from_output: create_schematic_pdf
-        - from_output: create_board_top_image
-        - from_output: create_board_bottom_image
-        - from_output: create_pcb_drawing
-        - from_output: create_step
-        - from_output: create_top_render_draft
-        - from_output: create_bottom_render_draft
-        - from_output: create_ortho_render_draft
+  # - name: create_full_archive_4layer_draft
+  #   comment: "Generates a ZIP file with gerber, drill, ibom, schematic, images at draft quality"
+  #   type: compress
+  #   run_by_default: false
+  #   options:
+  #     output: '%f-full.%x'
+  #     files:
+  #       - from_output: create_gerber_archive_4layer
+  #       - from_output: create_pnp_jlc
+  #       - from_output: create_bom
+  #       - from_output: create_ibom
+  #       - from_output: create_schematic_pdf
+  #       - from_output: create_board_top_image
+  #       - from_output: create_board_bottom_image
+  #       - from_output: create_pcb_drawing
+  #       - from_output: create_step
+  #       - from_output: create_top_render_draft
+  #       - from_output: create_bottom_render_draft
+  #       - from_output: create_ortho_render_draft
 
   - name: 'create_gerber_2layer'
     comment: "Generate JLC Gerbers for 2 layer board"
@@ -394,7 +400,7 @@ outputs:
       create_gerber_job_file: true
       use_gerber_x2_attributes: false
       use_gerber_net_attributes: false
-      output: '%f.%i'
+      output: '%f-${env.VERSION}.%i'
 
     layers:
       - layer: F.Cu

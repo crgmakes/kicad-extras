@@ -122,14 +122,13 @@ jobs:
         cd working/${{inputs.repo-name}}/
         date
         kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc 3d render
-        date
-        zip -r ${{inputs.file-name}}.zip pcb
+        zip -r ${{inputs.file-name}}-${{env.VERSION}}.zip pcb
         cd production
-        zip -ur ../${{inputs.file-name}}.zip pnp doc
-        zip -jr ${{inputs.file-name}}-gerber.zip gerber
-        zip -u ../${{inputs.file-name}}.zip ${{inputs.file-name}}-gerber.zip
+        zip -ur ../${{inputs.file-name}}-${{env.VERSION}}.zip pnp doc
+        zip -jr ${{inputs.file-name}}-${{env.VERSION}}-gerber.zip gerber
+        zip -u ../${{inputs.file-name}}-${{env.VERSION}}.zip ${{inputs.file-name}}-${{env.VERSION}}-gerber.zip
         cd ..
-        mv ${{inputs.file-name}}.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
+        mv ${{inputs.file-name}}-${{env.VERSION}}.zip ../../${{inputs.file-name}}-${{env.VERSION}}.zip
         # ${{inputs.file-name}}-${{env.VERSION}}.zip now in home directory
         date
 
@@ -146,15 +145,14 @@ jobs:
         date
         # working/${{inputs.repo-name}}/pcb/panel/pcb now contains ${{inputs.file-name}}-panel.kicad_pcb
         # create fab files for panel; does not include renders and 3d model
-        date
         kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e ../${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}-panel.kicad_pcb -d production panel_ecad_4
         date
-        zip -r ${{inputs.file-name}}-panel.zip pcb
+        zip -r ${{inputs.file-name}}-panel-${{env.VERSION}}.zip pcb
         cd production
-        zip -jr ${{inputs.file-name}}-panel-gerber.zip gerber 
-        zip -ur ../${{inputs.file-name}}-panel.zip ${{inputs.file-name}}-panel-gerber.zip doc pnp
+        zip -jr ${{inputs.file-name}}-panel-gerber-${{env.VERSION}}.zip gerber 
+        zip -ur ../${{inputs.file-name}}-panel-${{env.VERSION}}.zip ${{inputs.file-name}}-panel-gerber-${{env.VERSION}}.zip doc pnp
         cd ..
-        mv ${{inputs.file-name}}-panel.zip ../../../../${{inputs.file-name}}-panel-${{env.VERSION}}.zip
+        mv ${{inputs.file-name}}-panel-${{env.VERSION}}.zip ../../../../${{inputs.file-name}}-panel-${{env.VERSION}}.zip
         # home now contains ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
         date
 
