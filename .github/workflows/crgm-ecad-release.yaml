@@ -32,30 +32,30 @@ jobs:
         apt -y install git zip
 
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: working/${{inputs.repo-name}}
 
     - name: Checkout Extras
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: crgmakes/kicad-extras
         path: working/kicad-extras
 
     - name: Checkout CRGM Library
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: crgmakes/kicad-library
         path: working/kicad-library
 
     - name: Checkout PcbDraw Library
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: yaqwsx/PcbDraw-Lib
         path: working/PcbDraw-Lib
 
     - name: Checkout Fab Kit Library
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: bennymeg/Fabrication-Toolkit
         path: working/Fabrication-Toolkit

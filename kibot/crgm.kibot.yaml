@@ -14,8 +14,6 @@ global:
       # - KICAD_USER_LIBRARY: ${HOME}/kicad-library # only works locally not in git
       - KICAD_USER_LIBRARY: ${GITHUB_WORKSPACE}/working/kicad-library # only works in git
       - KICAD_USER_MODEL_DIR: ${KICAD_USER_LIBRARY}/models
-      - PROJECT_VERSION: ${env.VERSION}
-      - PROJECT_RELEASE_DATE: ${RELEASE_DATE}
   time_reformat: false
 
 filters:
@@ -361,7 +359,7 @@ outputs:
       create_gerber_job_file: true
       use_gerber_x2_attributes: false
       use_gerber_net_attributes: false
-      output: '%f.%i'
+      output: '%f-%r.%i'
 
     layers:
       - layer: F.Cu
@@ -400,7 +398,7 @@ outputs:
       create_gerber_job_file: true
       use_gerber_x2_attributes: false
       use_gerber_net_attributes: false
-      output: '%f-${env.VERSION}.%i'
+      output: '%f-%r.%i'
 
     layers:
       - layer: F.Cu
@@ -432,7 +430,7 @@ outputs:
       pth_and_npth_single_file: true
       use_aux_axis_as_origin: true
       map:
-        output: "%f-drill-map.%x"
+        output: "%f-drill-map-%r.%x"
         type: pdf
 
   - name: 'create_pnp_default'
@@ -441,7 +439,7 @@ outputs:
     type: position
     dir: pnp
     options:
-      output: '%f-cpl.%x'
+      output: '%f-cpl-%r.%x'
       format: CSV
       units: millimeters
       separate_files_for_front_and_back: false
@@ -465,7 +463,7 @@ outputs:
     type: position
     dir: pnp
     options:
-      output: '%f-jlc-cpl.%x'
+      output: '%f-jlc-cpl-%r.%x'
       format: CSV
       units: millimeters
       separate_files_for_front_and_back: false
@@ -490,7 +488,7 @@ outputs:
     type: bom
     dir: pnp
     options:
-      output: '%f-jlc-bom.%x'
+      output: '%f-jlc-bom-%r.%x'
       ref_separator: ','
       exclude_filter: 'exclude_common'
       columns:
@@ -521,7 +519,7 @@ outputs:
     type: ibom
     dir: doc/ibom
     options:
-      output: '%f-ibom.%x'
+      output: '%f-ibom-%r.%x'
       #exclude_filter: 'exclude_common'
       show_fields: 'Value,Description,MN,MPN,Footprint'
       extra_fields: 'Description,MN,MPN'
@@ -534,7 +532,7 @@ outputs:
     type: pdf_sch_print
     dir: doc/schematic
     options:
-      output: '%f-schematic.%x'
+      output: '%f-schematic-%r.%x'
 
   - name: 'create_board_top_image'
     comment: "Top View PNG"
@@ -542,7 +540,7 @@ outputs:
     type: pcbdraw
     dir: doc/image
     options:
-      output: '%f-pcb-top.%x'
+      output: '%f-pcb-top-%r.%x'
       format: png
       margin: 5
       show_solderpaste: false
@@ -559,7 +557,7 @@ outputs:
     dir: doc/image
     options:
       bottom: true
-      output: '%f-pcb-bottom.%x'
+      output: '%f-pcb-bottom-%r.%x'
       format: png
       margin: 5
       show_solderpaste: false
@@ -575,7 +573,7 @@ outputs:
     type: export_3d
     dir: doc/3d
     options:
-      output: '%f.%x'
+      output: '%f-%r.%x'
       # download: false
       download_lcsc: false
       download: true
@@ -593,7 +591,7 @@ outputs:
     dir: doc/render
     options:
       outputs:
-        output: '%f-render-top.%x'
+        output: '%f-render-top-%r.%x'
       render_options:
         samples: 1
       point_of_view:
@@ -612,7 +610,7 @@ outputs:
     dir: doc/render
     options:
       outputs:
-        output: '%f-render-bottom.%x'
+        output: '%f-render-bottom-%r.%x'
       render_options:
         samples: 1
       point_of_view:
@@ -631,7 +629,7 @@ outputs:
     dir: doc/render
     options:
       outputs:
-        output: '%f-render-ortho.%x'
+        output: '%f-render-ortho-%r.%x'
       render_options:
         samples: 1
       point_of_view:
@@ -651,7 +649,7 @@ outputs:
     dir: doc/render
     options:
       outputs:
-        output: '%f-render-top.%x'
+        output: '%f-render-top-%r.%x'
       render_options:
         samples: 10
       point_of_view:
@@ -670,7 +668,7 @@ outputs:
     dir: doc/render
     options:
       outputs:
-        output: '%f-render-bottom.%x'
+        output: '%f-render-bottom-%r.%x'
       render_options:
         samples: 10
       point_of_view:
@@ -689,7 +687,7 @@ outputs:
     dir: doc/render
     options:
       outputs:
-        output: '%f-render-ortho.%x'
+        output: '%f-render-ortho-%r.%x'
       render_options:
         samples: 10
       point_of_view:
@@ -708,7 +706,7 @@ outputs:
     type: pcb_print
     dir: doc/drawing
     options:
-      output: '%f-pcb-drawing.%x'
+      output: '%f-pcb-drawing-%r.%x'
       #force_edge_cuts: true
       plot_sheet_reference: false
       scaling: 0
@@ -729,7 +727,7 @@ outputs:
     type: pcb_print
     dir: doc/drawing
     options:
-      output: '%f-pcb-drawing.%x'
+      output: '%f-pcb-drawing-%r.%x'
       #force_edge_cuts: true
       plot_sheet_reference: false
       scaling: 0
