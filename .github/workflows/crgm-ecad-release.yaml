@@ -145,7 +145,7 @@ jobs:
         date
         # working/${{inputs.repo-name}}/pcb/panel/pcb now contains ${{inputs.file-name}}-panel.kicad_pcb
         # create fab files for panel; does not include renders and 3d model
-        kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e ../${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}-panel.kicad_pcb -d production panel_ecad_4
+        kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e ../${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}-panel-${{env.VERSION}}.kicad_pcb -d production panel_ecad_4
         date
         zip -r ${{inputs.file-name}}-panel-${{env.VERSION}}.zip pcb
         cd production
