@@ -9,6 +9,7 @@ kibot:
   version: 1
 
 global:
+  output: '%f-%i%I%v-%r.%x'
   environment:
     extra_os: 
       # - KICAD_USER_LIBRARY: ${HOME}/kicad-library # only works locally not in git
@@ -357,6 +358,7 @@ outputs:
       use_protel_extensions: false
       gerber_precision: 4.6
       create_gerber_job_file: true
+      gerber_job_file: '%f-%i%I%v-%r.%x'
       use_gerber_x2_attributes: false
       use_gerber_net_attributes: false
       output: '%f-%r.%i'
@@ -396,9 +398,10 @@ outputs:
       use_protel_extensions: false
       gerber_precision: 4.6
       create_gerber_job_file: true
+      gerber_job_file: '%f-%i%I%v-%r.%x'
       use_gerber_x2_attributes: false
       use_gerber_net_attributes: false
-      output: '%f-%r.%i'
+      output: '%f-%i%I%v-%r.%x'
 
     layers:
       - layer: F.Cu
@@ -429,8 +432,9 @@ outputs:
       metric_units: false
       pth_and_npth_single_file: true
       use_aux_axis_as_origin: true
+      output: '%f-%i%I%v-%r.%x'
       map:
-        output: "%f-drill-map-%r.%x"
+        output: '%f-%i%I%v-%r.%x'
         type: pdf
 
   - name: 'create_pnp_default'
