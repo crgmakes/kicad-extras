@@ -401,7 +401,7 @@ outputs:
       gerber_job_file: '%f-%i%I%v-%r.%x'
       use_gerber_x2_attributes: false
       use_gerber_net_attributes: false
-      output: '%f-%i%I%v-%r.%x'
+      output: '%f-%r.%i'
 
     layers:
       - layer: F.Cu
