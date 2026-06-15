@@ -149,7 +149,7 @@ jobs:
         cp ../${{inputs.file-name}}.kicad_sch pcb/${{inputs.file-name}}-panel-${{env.VERSION}}.kicad_sch
         ls -AlF .
         ls -AlF pcb
-        kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}-panel-${{env.VERSION}}.kicad_sch -b pcb/${{inputs.file-name}}-panel-${{env.VERSION}}.kicad_pcb -d production panel_ecad_4
+        kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e ../${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}-panel-${{env.VERSION}}.kicad_pcb -d production panel_ecad_4
         zip -r ${{inputs.file-name}}-panel-${{env.VERSION}}.zip pcb
         cd production
         zip -jr ${{inputs.file-name}}-panel-gerber-${{env.VERSION}}.zip gerber 
