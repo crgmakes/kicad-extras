@@ -162,15 +162,15 @@ groups:
     outputs:
       - jlc_fab_2
       - doc
-      - 3d
-      - render
+      # - 3d
+      # - render
   - name: full_ecad_4
     comment: "Generate full ECAD files; gerber, drill, pnp, ibom, images, drawing, model, render"
     outputs:
       - jlc_fab_4
       - doc
-      - 3d
-      - render
+      # - 3d
+      # - render
   - name: panel_ecad_2
     comment: "Generate ECAD files for panel; gerber, drill, pnp, images, drawing"
     outputs:
