@@ -75,6 +75,7 @@ filters:
       - ["^CP_Elec_5x5.4", 0]
       - ["^Bourns_TC33X_Vertical", -90]
       - ["^LTR-303ALS-01", -90]
+      - ["^PinHeader_2x05_P1.27mm_Vertical",90]
     offsets:
       - ["^TO-252-2", "3.3,0"]
       - ["^Converter_ACDC_MeanWell_IRM-10-xx_THT", "-19.2, 5.5"]
@@ -84,6 +85,7 @@ filters:
       - ["^ESP32-S3-WROOM-1-N16R2", "0, 3.65"]
       - ["^XF2C_1415-1A", "0, -0.37"]
       - ["^XF2M_1415-1A", "0, -0.37"]
+      - ["^PinHeader_2x05_P1.27mm_Vertical","2.54,0.635"]
 
 variants:
   - name: default
