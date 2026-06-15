@@ -45,7 +45,7 @@ filters:
     type: rot_footprint
     rotations:
       - ["^QFN-28-1EP_6x6mm_P0.65mm_EP4.25x4.25mm", -90.0]
-      - ["^QFN-28_4x4mm_P0.5mm", 90.0]
+      - ["^QFN-28_4x4mm_P0.5mm", 0.0]
       - ["^JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal", 180.0]
       - ["^JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal", 180.0]
       - ["^JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal", 180.0]
@@ -76,6 +76,7 @@ filters:
       - ["^Bourns_TC33X_Vertical", -90]
       - ["^LTR-303ALS-01", -90]
       - ["^PinHeader_2x05_P1.27mm_Vertical",90]
+      - ["^PinHeader_2x05_P1.27mm_Vertical_SMD",90]
     offsets:
       - ["^TO-252-2", "3.3,0"]
       - ["^Converter_ACDC_MeanWell_IRM-10-xx_THT", "-19.2, 5.5"]
@@ -86,6 +87,7 @@ filters:
       - ["^XF2C_1415-1A", "0, -0.37"]
       - ["^XF2M_1415-1A", "0, -0.37"]
       - ["^PinHeader_2x05_P1.27mm_Vertical","2.54,0.635"]
+      - ["^PinHeader_2x05_P1.27mm_Vertical_SMD","2.54,0.635"]
 
 variants:
   - name: default
@@ -519,6 +521,7 @@ outputs:
     comment: "Create panelized PCB from specified PCB"
     type: panelize
     options:
+      output: '%f-panel-%r.%x'
       units: mm
       configs:
         "panel-options.json"
