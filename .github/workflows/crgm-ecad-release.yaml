@@ -23,7 +23,8 @@ jobs:
   export-ecad:
     name: Export ECAD
     runs-on: ubuntu-latest
-    container: ghcr.io/inti-cmnb/kicad10_auto_full:dev
+    container: ghcr.io/inti-cmnb/kicad10_auto_full:1.9.0
+    #container: ghcr.io/inti-cmnb/kicad10_auto_full:dev
     #container: ghcr.io/inti-cmnb/kicad9_auto_full:latest
     #container: ghcr.io/inti-cmnb/kicad9_auto_full:1.8.5
       
@@ -103,8 +104,8 @@ jobs:
         echo "Working Directory: ${GITHUB_WORKSPACE}"
         cd working/${{inputs.repo-name}}/
         date
-        #kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc 3d
-        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc
+        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc 3d
+        #kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc
         date
         cd production
         zip -jr ${{inputs.file-name}}-gerber.zip gerber
@@ -124,8 +125,8 @@ jobs:
         echo "Working Directory: ${GITHUB_WORKSPACE}"
         cd working/${{inputs.repo-name}}/
         date
-        #kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc 3d render
-        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc
+        kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc 3d render
+        #kibot -c ../kicad-extras/kibot/crgm.kibot.yaml -e pcb/${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}.kicad_pcb -d production jlc_fab_4 doc
         zip -r ${{inputs.file-name}}-${{env.VERSION}}.zip pcb
         cd production
         zip -ur ../${{inputs.file-name}}-${{env.VERSION}}.zip pnp doc
@@ -149,8 +150,6 @@ jobs:
         # working/${{inputs.repo-name}}/pcb/panel/pcb now contains ${{inputs.file-name}}-panel-${{env.VERSION}}.kicad_pcb
         # create fab files for panel; does not include renders and 3d model
         cp ../${{inputs.file-name}}.kicad_sch pcb/${{inputs.file-name}}-panel-${{env.VERSION}}.kicad_sch
-        ls -AlF .
-        ls -AlF pcb
         kibot -c ../../../kicad-extras/kibot/crgm.kibot.yaml -e ../${{inputs.file-name}}.kicad_sch -b pcb/${{inputs.file-name}}-panel-${{env.VERSION}}.kicad_pcb -d production panel_ecad_4
         zip -r ${{inputs.file-name}}-panel-${{env.VERSION}}.zip pcb
         cd production
@@ -172,17 +171,6 @@ jobs:
           ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
         if-no-files-found: warn
         retention-days: 10
-
-    # # Upload panel artifacts to workflow
-    # - name: Upload Panel Artifacts
-    #   if: github.event_name == 'release'
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     # name: '${{inputs.name}} Panel ${{env.VERSION}}'
-    #     path: |
-    #       ${{inputs.file-name}}-panel-${{env.VERSION}}.zip
-    #     if-no-files-found: warn
-    #     retention-days: 10
 
     # Upload fab artifacts to release
     - name: Upload Release
