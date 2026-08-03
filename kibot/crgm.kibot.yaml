@@ -87,7 +87,7 @@ filters:
       - ["^XF2C_1415-1A", "0, -0.37"]
       - ["^XF2M_1415-1A", "0, -0.37"]
       # - ["^PinHeader_2x05_P1.27mm_Vertical","2.54,0.635"]
-      - ["^PinHeader_2x05_P1.27mm_Vertical_SMD","2.54,0.635"]
+      - ["^PinHeader_2x05_P1.27mm_Vertical_SMD","0,0"]
 
 variants:
   - name: default
