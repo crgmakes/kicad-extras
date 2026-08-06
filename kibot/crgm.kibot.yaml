@@ -77,6 +77,7 @@ filters:
       - ["^LTR-303ALS-01", -90]
       - ["^PinHeader_2x05_P1.27mm_Vertical",90]
       - ["^PinHeader_2x05_P1.27mm_Vertical_SMD",90]
+      - ["^PinHeader_2x02_P1.27mm_Vertical_SMD",90]
     offsets:
       - ["^TO-252-2", "3.3,0"]
       - ["^Converter_ACDC_MeanWell_IRM-10-xx_THT", "-19.2, 5.5"]
@@ -88,6 +89,7 @@ filters:
       - ["^XF2M_1415-1A", "0, -0.37"]
       # - ["^PinHeader_2x05_P1.27mm_Vertical","2.54,0.635"]
       - ["^PinHeader_2x05_P1.27mm_Vertical_SMD","0,0"]
+      - ["^PinHeader_2x02_P1.27mm_Vertical_SMD","0,0"]
 
 variants:
   - name: default
