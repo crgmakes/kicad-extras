@@ -94,8 +94,7 @@ jobs:
         sed -i "s!<<hash>>!${{env.HASH}}!" *.kicad_sch
         sed -i "s!<<tag>>!${{ env.VERSION }}!" *.kicad_sch
         sed -i "s!<<tag>>!${{ env.VERSION }}!" *.kicad_pcb
-        sed -i "s!<<>>!${{ env.VERSION }}!g" *.kicad_sch
-        sed -i "s!<<>>!${{ env.VERSION }}!g" *.kicad_pcb
+        sed -i "s/vX\.Y/${{ env.VERSION }}/g" *.kicad_sch
         sed -i "s/vX\.Y/${{ env.VERSION }}/g" *.kicad_pcb
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_pcb
         sed -i "s!<<release-date>>!${RELEASE_DATE}!" *.kicad_sch
